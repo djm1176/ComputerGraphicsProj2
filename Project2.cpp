@@ -43,6 +43,9 @@ void mouseCallback(int, int, int, int);
 void motionCallback(int, int);
 void reshapeCallback(int, int);
 void draw();
+void helpDisplayCallback();
+void helpKeyboardCallback(unsigned char, int, int);
+void drawHelp();
 
 void recalculateDisplayString(int, int);
 
@@ -66,6 +69,7 @@ std::string text = "Hello, world! This is a test with some text on screen. It is
 std::vector<std::string> disp_text;
 
 const GLint WINDOW_SIZE[]{ 800, 600 };
+const GLint HELP_SIZE[]{ 400, 200 };
 const GLint ORIGIN_OFFSET[]{ 32, 24 };
 
 MousePosition mouse_position = MousePosition(0.0, 70.0);
@@ -75,6 +79,7 @@ bool leftButton = false;
 bool rightButton = false;
 
 int mainWindow;
+int helpWindow;
 
 //********* Subroutines
 int main(int argc, char** argv) {
@@ -92,6 +97,15 @@ int main(int argc, char** argv) {
 	glutMouseFunc(mouseCallback);
 	glutMotionFunc(motionCallback);
 	glutReshapeFunc(reshapeCallback);
+
+	glutInitWindowSize(HELP_SIZE[0], HELP_SIZE[1]);
+	glutInitWindowPosition(850, 0);
+	helpWindow = glutCreateWindow("GLUT Text Editor Help");
+	myInit();
+
+	glutDisplayFunc(helpDisplayCallback);
+	glutKeyboardFunc(helpKeyboardCallback);
+
 	glutMainLoop();  // get into an infinite loop
 
 	return 1;  // something wrong happened
@@ -110,6 +124,16 @@ void myDisplayCallback() {
 	draw();
 
 	glFlush();  // flush out the buffer contents
+}
+
+//***********************************************************************************
+void helpDisplayCallback() {
+	glClear(GL_COLOR_BUFFER_BIT);  // draw the background
+
+	drawHelp();
+
+	glFlush();  // flush out the buffer contents
+	glutSwapBuffers();
 }
 
 //***********************************************************************************
@@ -138,6 +162,16 @@ void keyboardCallback(unsigned char key, int x, int y) {
 	recalculateDisplayString(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
 	myDisplayCallback();
 	glFlush();
+}
+
+//***********************************************************************************
+void helpKeyboardCallback(unsigned char key, int x, int y) {
+	switch (key) {
+	case 81:
+	case 113:
+		glutHideWindow();
+		break;
+	}
 }
 
 //***********************************************************************************
@@ -246,4 +280,9 @@ void renderFileText() {
 void draw() {
 	renderInterface();
 	renderFileText();
+}
+
+//***********************************************************************************
+void drawHelp() {
+
 }
