@@ -45,6 +45,7 @@ void reshapeCallback(int, int);
 void draw();
 void helpDisplayCallback();
 void helpKeyboardCallback(unsigned char, int, int);
+void drawHelpText(std::string text, int length, int x, int y);
 void drawHelp();
 
 void recalculateDisplayString(int, int);
@@ -285,4 +286,16 @@ void draw() {
 //***********************************************************************************
 void drawHelp() {
 
+	std::string done = "Press Q to terminate the help screen and to return to the editor.";
+	drawHelpText(done, 0, 10, 575);
+
+}
+
+void drawHelpText(std::string text, int length, int x, int y) {
+	glColor3f(0.8, 0.8, 0.8);
+	glRasterPos2i(x, y);
+	for (auto c : text)
+	{
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, (int)c);
+	}
 }
