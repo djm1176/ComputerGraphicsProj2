@@ -1,5 +1,5 @@
 /*==================================================================================================
- 
+
  #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
  #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
  #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
@@ -9,7 +9,7 @@
  #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
  #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
  #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
- 
+
  COURSE:				  CSC 525/625
  ASSIGNMENT:			  Project 2
  PROGRAMMER:			  Eric McCullough
@@ -70,7 +70,7 @@ std::string text = "Hello, world! This is a test with some text on screen. It is
 std::vector<std::string> disp_text;
 
 const GLint WINDOW_SIZE[]{ 800, 600 };
-const GLint HELP_SIZE[]{ 700, 200 };
+const GLint HELP_SIZE[]{ 700, 300 };
 const GLint ORIGIN_OFFSET[]{ 32, 24 };
 
 MousePosition mouse_position = MousePosition(0.0, 70.0);
@@ -150,14 +150,18 @@ void keyboardCallback(unsigned char key, int x, int y) {
 
 	if (key == 8) {
 		text = text.substr(0, text.length() - 1);
-	} else if(key == 13) {
+	}
+	else if (key == 13) {
 		text += '\n';
-	} else if (key == 9) {
+	}
+	else if (key == 9) {
 		text += '\t';
-	} else if (key < 31) {
+	}
+	else if (key < 31) {
 		//TODO: this if block is for debugging, remove this block!
 		text += "<" + std::to_string(key) + ">";
-	} else {
+	}
+	else {
 		text += key;
 	}
 	recalculateDisplayString(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
@@ -177,7 +181,7 @@ void helpKeyboardCallback(unsigned char key, int x, int y) {
 
 //***********************************************************************************
 void mouseCallback(int button, int state, int x, int y) {
-	
+
 }
 
 //***********************************************************************************
@@ -235,10 +239,10 @@ void renderInterface() {
 
 	//Render line number border
 	glBegin(GL_QUADS);
-		glVertex2i(ORIGIN_OFFSET[0] - 2, 0 * glutBitmapHeight(GLOBAL_FONT) + ORIGIN_OFFSET[1] + (WINDOW_SIZE[1] - _height));
-		glVertex2i(ORIGIN_OFFSET[0] - 1, 0 * glutBitmapHeight(GLOBAL_FONT) + ORIGIN_OFFSET[1] + (WINDOW_SIZE[1] - _height));
-		glVertex2i(ORIGIN_OFFSET[0] - 1, 0 * glutBitmapHeight(GLOBAL_FONT) + ORIGIN_OFFSET[1] + (WINDOW_SIZE[1] - _height) - 15);
-		glVertex2i(ORIGIN_OFFSET[0] - 2, 0 * glutBitmapHeight(GLOBAL_FONT) + ORIGIN_OFFSET[1] + (WINDOW_SIZE[1] - _height) - 15);
+	glVertex2i(ORIGIN_OFFSET[0] - 2, 0 * glutBitmapHeight(GLOBAL_FONT) + ORIGIN_OFFSET[1] + (WINDOW_SIZE[1] - _height));
+	glVertex2i(ORIGIN_OFFSET[0] - 1, 0 * glutBitmapHeight(GLOBAL_FONT) + ORIGIN_OFFSET[1] + (WINDOW_SIZE[1] - _height));
+	glVertex2i(ORIGIN_OFFSET[0] - 1, 0 * glutBitmapHeight(GLOBAL_FONT) + ORIGIN_OFFSET[1] + (WINDOW_SIZE[1] - _height) - 15);
+	glVertex2i(ORIGIN_OFFSET[0] - 2, 0 * glutBitmapHeight(GLOBAL_FONT) + ORIGIN_OFFSET[1] + (WINDOW_SIZE[1] - _height) - 15);
 	glEnd();
 }
 
@@ -271,7 +275,8 @@ void renderFileText() {
 			if (disp_text[i][j] == 9) {
 				//Tab character
 				for (int k = 0; k < 4; k++) glutBitmapCharacter(GLOBAL_FONT, ' ');
-			} else if(disp_text[i][j] > 31) {
+			}
+			else if (disp_text[i][j] > 31) {
 				glutBitmapCharacter(GLOBAL_FONT, disp_text[i][j]);
 			}
 	}
@@ -286,18 +291,22 @@ void draw() {
 //***********************************************************************************
 void drawHelp() {
 
-	std::string helpItems[7] = { "Welcome to the GLUT Text Editor, Version 1.0, November 2020",
+	std::string helpItems[10] = { "Welcome to the GLUT Text Editor, Version 1.0, November 2020",
 	"To change properties about the text, right click the editor to view the menu",
-	"Select 'Font' to change the font", "Select 'Color' to change the text color", "Select 'Help' to return to this window",
-	"Select 'Save' to save the text to a file", "Select 'Exit' to leave the program"}; //The
+	"   Select 'Font' to change the font", "   Select 'Color' to change the text color", 
+	"   Select 'Help' to return to this help window", "   Select 'Save' to save the text to a file", 
+	"   Select 'Exit' to leave the program", "Keyboard Shortcuts:", "   CTRL + S to save the file", 
+	"   CTRL + H for help" }; //
 
+	std::string saveLoc = "The saved file is stored at C:\Temp\typed.txt";
 	std::string done = "Press Q to terminate the help screen and to return to the editor.";
 
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < sizeof(helpItems) / sizeof(helpItems[0]); i++)
 	{
-		drawHelpText(helpItems[i], 0, 10, (i * 50) + 65);
+		drawHelpText(helpItems[i], 0, 10, (i * 35) + 40);
 	}
 
+	drawHelpText(saveLoc, 0, 10, 530);
 	drawHelpText(done, 0, 10, 575);
 
 }
