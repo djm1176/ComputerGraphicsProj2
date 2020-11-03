@@ -70,7 +70,7 @@ std::string text = "Hello, world! This is a test with some text on screen. It is
 std::vector<std::string> disp_text;
 
 const GLint WINDOW_SIZE[]{ 800, 600 };
-const GLint HELP_SIZE[]{ 600, 200 };
+const GLint HELP_SIZE[]{ 700, 200 };
 const GLint ORIGIN_OFFSET[]{ 32, 24 };
 
 MousePosition mouse_position = MousePosition(0.0, 70.0);
@@ -286,7 +286,18 @@ void draw() {
 //***********************************************************************************
 void drawHelp() {
 
+	std::string helpItems[7] = { "Welcome to the GLUT Text Editor, Version 1.0, November 2020",
+	"To change properties about the text, right click the editor to view the menu",
+	"Select 'Font' to change the font", "Select 'Color' to change the text color", "Select 'Help' to return to this window",
+	"Select 'Save' to save the text to a file", "Select 'Exit' to leave the program"}; //The
+
 	std::string done = "Press Q to terminate the help screen and to return to the editor.";
+
+	for (int i = 0; i < 7; i++)
+	{
+		drawHelpText(helpItems[i], 0, 10, (i * 50) + 65);
+	}
+
 	drawHelpText(done, 0, 10, 575);
 
 }
