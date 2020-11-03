@@ -70,7 +70,7 @@ std::string text = "Hello, world! This is a test with some text on screen. It is
 std::vector<std::string> disp_text;
 
 const GLint WINDOW_SIZE[]{ 800, 600 };
-const GLint HELP_SIZE[]{ 400, 200 };
+const GLint HELP_SIZE[]{ 600, 200 };
 const GLint ORIGIN_OFFSET[]{ 32, 24 };
 
 MousePosition mouse_position = MousePosition(0.0, 70.0);
@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
 	glutReshapeFunc(reshapeCallback);
 
 	glutInitWindowSize(HELP_SIZE[0], HELP_SIZE[1]);
-	glutInitWindowPosition(850, 0);
+	glutInitWindowPosition(825, 0);
 	helpWindow = glutCreateWindow("GLUT Text Editor Help");
 	myInit();
 
@@ -296,6 +296,6 @@ void drawHelpText(std::string text, int length, int x, int y) {
 	glRasterPos2i(x, y);
 	for (auto c : text)
 	{
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, (int)c);
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, (int)c);
 	}
 }
