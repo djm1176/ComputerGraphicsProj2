@@ -293,9 +293,9 @@ void drawHelp() {
 
 	std::string helpItems[10] = { "Welcome to the GLUT Text Editor, Version 1.0, November 2020",
 	"To change properties about the text, right click the editor to view the menu",
-	"   Select 'Font' to change the font", "   Select 'Color' to change the text color", 
-	"   Select 'Help' to return to this help window", "   Select 'Save' to save the text to a file", 
-	"   Select 'Exit' to leave the program", "Keyboard Shortcuts:", "   CTRL + S to save the file", 
+	"   Select 'Font' to change the font", "   Select 'Color' to change the text color",
+	"   Select 'Help' to return to this help window", "   Select 'Save' to save the text to a file",
+	"   Select 'Exit' to leave the program", "Keyboard Shortcuts:", "   CTRL + S to save the file",
 	"   CTRL + H for help" }; //
 
 	std::string saveLoc = "The saved file is stored at C:\Temp\typed.txt";
