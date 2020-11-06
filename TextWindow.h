@@ -4,8 +4,10 @@
 #include <string>
 
 class TextWindow {
+
 public:
-	TextWindow();
+	//Construct a TextWindow with a width and height
+	TextWindow(int w, int h);
 
 	//Render the TextWindow
 	void render();
@@ -23,25 +25,44 @@ public:
 	void motionCallback(int x, int y);
 
 	//Change the font displayed to a new GL font
-	void setFont(const void* font);
+	void setFont(void* font);
 
 	//Change the font color to a new RGB (0-255) color
-	void setColor(GLbyte* col);
+	void setColor(GLubyte* col);
 
-	//Change the font color to a new RGB color
-	void setColor(GLfloat* col);
+	//Set the window's text to the provided string
+	void setText(const std::string& text);
 
 private:
-	//The actual strings that are displayed on the GUI
-	std::vector<std::string> m_cachedDisplayString;
+	//Source string that is edited by the user
+	std::string m_text;
+
+	//Precomputed collection of strings that is used for displaying to the user
+	std::vector<std::vector<std::string>> m_cachedDisplay;
 
 	//The displayed text is offset by (x, y). This accounts for borders, padding, etc.
-	GLint m_offsetTextPos[2]{ 0, 0 };
+	GLint m_offsetTextPos[2];
 
 	//The size of the TextEditor window
-	GLint m_windowSize[2]{ 0, 0 };
+	GLint m_windowSize[2];
 
-	//Recalculates the vector of strings that is displayed on the GUI
-	void recalculateCacheString();
+	//The font used to render the text
+	void* m_font;
+
+	//The font color used to render the text
+	GLubyte m_fontColor[3];
+
+	bool m_leftMouseDown, m_rightMouseDown;
+	int m_mousePos[2];
+
+	//Recalculates and updates internal properties that are used to display the text graphics
+	void recalculate();
+
+private:
+	//TODO: All values in this field are for testing and should be replaced at some point
+
+	//TODO: Replace with container for color "theme"
+	GLubyte FONT_COLOR_TEXT[3]	{ 204, 204, 204 };
+	GLubyte BACKGROUND_COLOR[3]	{ 20, 31, 31 };
 };
 
