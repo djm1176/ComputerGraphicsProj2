@@ -124,6 +124,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Project2.cpp" />
+    <ClCompile Include="TextWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TextWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
