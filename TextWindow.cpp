@@ -14,16 +14,18 @@ void TextWindow::render() {
 	glVertex2i(0, m_windowSize[1]);
 	glEnd();
 
+	glRasterPos2iv(m_windowSize);
 	//Render text
-	for (int i = 0; i < m_cachedDisplay.size(); i++) {
+	for (int i = 0, l = 0; i < m_cachedDisplay.size(); i++) {
 		//Each line number...
 
 		//TODO: Render line number on left-hand side.
 		//glColor3f...
 
 		glColor3ubv(FONT_COLOR_TEXT);
-		for (int j = 0; j < m_cachedDisplay.at(i).size(); j++) {
+		for (int j = 0; j < m_cachedDisplay.at(i).size(); j++, l++) {
 			//Each "word-wrap line"...
+			glRasterPos2i(m_textPadding[0], l * glutBitmapHeight(m_font) + m_textPadding[1]);
 			for (int c = 0; c < m_cachedDisplay.at(i).at(j).length(); c++) {
 				if (m_cachedDisplay.at(i).at(j)[c] == 9) {
 					for (int k = 0; k < 4; k++) glutBitmapCharacter(m_font, ' '); //Render tabs
@@ -83,6 +85,12 @@ void TextWindow::setFont(void* font) {
 	recalculate();
 }
 
+void TextWindow::setPadding(int w, int h) {
+	m_textPadding[0] = w;
+	m_textPadding[1] = h;
+	recalculate();
+}
+
 void TextWindow::setColor(GLubyte* col) {
 	m_fontColor[0] = col[0]; //R
 	m_fontColor[1] = col[1]; //G
@@ -124,7 +132,7 @@ void TextWindow::recalculate() {
 
 	//How many characters at the current font can be on a row
 	//NOTE: 'W' is a reasonably wide character; that is the reason for using its width for this calculation
-	int _max_row_chars = m_windowSize[0] / glutBitmapWidth(m_font, 'W');
+	int _max_row_chars = (m_windowSize[0] - (m_textPadding[0] * 2)) / glutBitmapWidth(m_font, 'W');
 
 	for (int i = 0; i < m_cachedDisplay.size(); i++) {
 		for (int j = 0; j < m_cachedDisplay.at(i).size(); j++) {

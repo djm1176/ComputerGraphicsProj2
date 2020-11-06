@@ -6,6 +6,8 @@
 class TextWindow {
 
 public:
+	TextWindow() = default;
+
 	//Construct a TextWindow with a width and height
 	TextWindow(int w, int h);
 
@@ -27,6 +29,9 @@ public:
 	//Change the font displayed to a new GL font
 	void setFont(void* font);
 
+	//Change the padding of the text on all sides by (w, h)
+	void setPadding(int w, int h);
+
 	//Change the font color to a new RGB (0-255) color
 	void setColor(GLubyte* col);
 
@@ -46,8 +51,11 @@ private:
 	//The size of the TextEditor window
 	GLint m_windowSize[2];
 
+	//The padding in pixels between top left corner and where text is displayed
+	GLint m_textPadding[2];
+
 	//The font used to render the text
-	void* m_font;
+	void* m_font = GLUT_BITMAP_9_BY_15;
 
 	//The font color used to render the text
 	GLubyte m_fontColor[3];
