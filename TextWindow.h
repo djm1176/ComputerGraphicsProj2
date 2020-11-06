@@ -38,6 +38,9 @@ public:
 	//Set the window's text to the provided string
 	void setText(const std::string& text);
 
+	//Returns the text within the text editor
+	std::string getText();
+
 private:
 	//Source string that is edited by the user
 	std::string m_text;
@@ -69,8 +72,8 @@ private:
 private:
 	//TODO: All values in this field are for testing and should be replaced at some point
 
-	//TODO: Replace with container for color "theme"
-	GLubyte FONT_COLOR_TEXT[3]	{ 204, 204, 204 };
-	GLubyte BACKGROUND_COLOR[3]	{ 20, 31, 31 };
+	GLubyte FONT_COLOR_TEXT[3]{ 204, 204, 204 };
+	GLubyte FONT_COLOR_DIM[3]{ 190, 190, 190 };
+
 };
 

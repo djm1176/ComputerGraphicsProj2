@@ -5,14 +5,6 @@ TextWindow::TextWindow(int w, int h) {
 }
 
 void TextWindow::render() {
-	//Render background color
-	glColor3ubv(BACKGROUND_COLOR);
-	glBegin(GL_QUADS);
-	glVertex2i(0, 0);
-	glVertex2i(m_windowSize[0], 0);
-	glVertex2i(m_windowSize[0], m_windowSize[1]);
-	glVertex2i(0, m_windowSize[1]);
-	glEnd();
 
 	glRasterPos2iv(m_windowSize);
 	//Render text
@@ -20,7 +12,9 @@ void TextWindow::render() {
 		//Each line number...
 
 		//TODO: Render line number on left-hand side.
-		//glColor3f...
+		glRasterPos2i(4, l * glutBitmapHeight(m_font) + m_textPadding[1]);
+		glColor3ubv(FONT_COLOR_DIM);
+		glutBitmapString(m_font, (unsigned char*)std::to_string(i).c_str());
 
 		glColor3ubv(FONT_COLOR_TEXT);
 		for (int j = 0; j < m_cachedDisplay.at(i).size(); j++, l++) {
@@ -61,6 +55,8 @@ void TextWindow::keyboardCallback(int key) {
 		m_text += key;
 	}
 	recalculate();
+	render();
+	glFlush();
 }
 
 void TextWindow::mouseCallback(int btn, int state, int x, int y) {
@@ -102,6 +98,10 @@ void TextWindow::setColor(GLubyte* col) {
 void TextWindow::setText(const std::string& text) {
 	m_text = text;
 	recalculate();
+}
+
+std::string TextWindow::getText() {
+	return m_text;
 }
 
 void TextWindow::recalculate() {
