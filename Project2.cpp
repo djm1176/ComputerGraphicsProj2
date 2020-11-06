@@ -34,6 +34,8 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <stdexcept>
 
 #include "TextWindow.h"
 
@@ -49,6 +51,7 @@ void helpDisplayCallback();
 void helpKeyboardCallback(unsigned char, int, int);
 void drawHelpText(std::string text, int length, int x, int y);
 void drawHelp();
+void save();
 
 //********* Types
 struct MousePosition {
@@ -62,10 +65,18 @@ struct MousePosition {
 	}
 };
 
-//********* Globals
+class InvalidFileException : public std::runtime_error {
+public:
+	explicit InvalidFileException(const std::string& message = "")
+		: std::runtime_error("Invalid file " + message + " either does not exist or could not be opened.") {
+		// Empty due to using MIL
+	}
+};
 
+//********* Globals
 TextWindow text_window;
 
+// TODO: Could we give this a more distinctive name since it's a global? Maybe all caps or something like file_text
 std::string text = "Hello, world! This is a test with some text on screen. It is really sort of annoyingly long and it doesn't really mean anything, but it demonstrates how word wrapping should work.\nThis text should be on a new line.\n\nThis text is 2 lines below. Would you like a tab?\tThere's a tab.\n\tOh, what about a tab on a new line? Isn't that cool?";
 //const std::string text = "Line 1\nLine 2\t<tab\n\nLine 3 with 1 empty line above\n\tLine 4 with tab at start";
 
@@ -143,6 +154,7 @@ void helpDisplayCallback() {
 //***********************************************************************************
 void keyboardCallback(unsigned char key, int x, int y) {
 	text_window.keyboardCallback(key);
+  
 }
 
 //***********************************************************************************
@@ -181,9 +193,9 @@ void drawHelp() {
 
 	std::string helpItems[10] = { "Welcome to the GLUT Text Editor, Version 1.0, November 2020",
 	"To change properties about the text, right click the editor to view the menu",
-	"   Select 'Font' to change the font", "   Select 'Color' to change the text color", 
-	"   Select 'Help' to return to this help window", "   Select 'Save' to save the text to a file", 
-	"   Select 'Exit' to leave the program", "Keyboard Shortcuts:", "   CTRL + S to save the file", 
+	"   Select 'Font' to change the font", "   Select 'Color' to change the text color",
+	"   Select 'Help' to return to this help window", "   Select 'Save' to save the text to a file",
+	"   Select 'Exit' to leave the program", "Keyboard Shortcuts:", "   CTRL + S to save the file",
 	"   CTRL + H for help" }; //
 
 	std::string saveLoc = "The saved file is stored at C:\Temp\typed.txt";
@@ -206,4 +218,15 @@ void drawHelpText(std::string text, int length, int x, int y) {
 	{
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, (int)c);
 	}
+}
+
+void save() {
+	std::string outFileName = "C:\\Temp\\type.txt";
+	std::ofstream outfile(outFileName);
+	if (!outfile.is_open()) {
+		outfile.close();
+		throw InvalidFileException(outFileName);
+	}
+	outfile << text;
+	outfile.close();
 }
