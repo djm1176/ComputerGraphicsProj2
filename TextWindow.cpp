@@ -51,6 +51,7 @@ void TextWindow::keyboardCallback(int key) {
 	
 	std::string& _targetStr = m_cachedDisplay.at(m_cursorRow);
 	if (key == 8) {
+		//New line
 		if (m_cursorCol == 0 && _targetStr.length() == 0)
 			m_cachedDisplay.erase(m_cachedDisplay.begin() + m_cursorRow);
 		else
@@ -124,9 +125,7 @@ void TextWindow::specialFuncCallback(int key) {
 void TextWindow::serialize() {
 	std::stringstream ss;
 	for (int i = 0; i < m_cachedDisplay.size(); i++) {
-		for (int j = 0; j < m_cachedDisplay.at(i).size(); j++) {
-			ss << m_cachedDisplay.at(i).at(j);
-		}
+			ss << m_cachedDisplay.at(i) << "\n";
 	}
 	m_text = ss.str();
 }
@@ -156,6 +155,9 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 	bool done = false;
 
 	if (y >= m_cachedDisplay.size()) y = m_cachedDisplay.size() - 1;
+	for (int i = 0, m_cursorOffset = 0; i < m_cachedDisplay.size(); i++) {
+		m_cursorOffset += m_cachedDisplay.at(i).length();
+	}
 
 	for (; c < m_cachedDisplay.at(y).length(); c++) {
 		char _char = m_cachedDisplay.at(y)[c];

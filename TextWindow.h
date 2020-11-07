@@ -71,6 +71,7 @@ private:
 
 	//Represents the location of the keyboard cursor in the cached display text
 	int m_cursorRow{ 0 }, m_cursorSubRow{ 0 }, m_cursorCol{ 0 }, m_cursorX{ 0 }, m_cursorY{ 0 };
+	int m_cursorOffset{ 0 };
 
 	//Recalculates and updates internal properties that are used to display the text graphics
 	void recalculate();
