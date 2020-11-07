@@ -3,16 +3,6 @@
 #include <vector>
 #include <string>
 
-struct TextRow {
-public:
-	//The source text for this row of text
-	std::string sourceStr;
-
-	//Contains a list of positions in the source string where the text should wrap to a new line
-	std::vector<int> wordWrapIndices;
-
-};
-
 class TextWindow {
 
 public:
@@ -59,7 +49,7 @@ private:
 	std::string m_text;
 
 	//Precomputed collection of strings that is used for displaying to the user
-	std::vector<TextRow> m_cachedDisplay;
+	std::vector<std::string> m_cachedDisplay;
 
 	//The displayed text is offset by (x, y). This accounts for borders, padding, etc.
 	GLint m_offsetTextPos[2];

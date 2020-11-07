@@ -10,27 +10,24 @@ void TextWindow::render() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glRasterPos2iv(m_windowSize);
 	//Render text
-	for (int i = 0, l = 0; i < m_cachedDisplay.size(); i++) {
-		//Each line number...
+	for (int i = 0; i < m_cachedDisplay.size(); i++) {
+		//Each line of text
 
-		//TODO: Render line number on left-hand side.
-		glRasterPos2i(4, l * glutBitmapHeight(m_font) + m_textPadding[1]);
+		//Render line number on left-hand side.
+		glRasterPos2i(4, i * glutBitmapHeight(m_font) + m_textPadding[1]);
 		glColor3ubv(FONT_COLOR_DIM);
 		glutBitmapString(m_font, (unsigned char*)std::to_string(i).c_str());
 
 		glColor3ubv(FONT_COLOR_TEXT);
-		for (int j = 0; j < m_cachedDisplay.at(i).size(); j++, l++) {
-			//Each "word-wrap line"...
-			glRasterPos2i(m_textPadding[0], l * glutBitmapHeight(m_font) + m_textPadding[1]);
-			for (int c = 0; c < m_cachedDisplay.at(i).at(j).length(); c++) {
-				if (m_cachedDisplay.at(i).at(j)[c] == 9) {
-					for (int k = 0; k < 4; k++) glutBitmapCharacter(m_font, 32); //Render tabs
-				} else {
-					//Render all other characters
-					glutBitmapCharacter(m_font, m_cachedDisplay.at(i).at(j)[c]);
-				}
-			}
+		glRasterPos2i(m_textPadding[0], i * glutBitmapHeight(m_font) + m_textPadding[1]);
 
+		for (int c = 0; c < m_cachedDisplay.at(i).length(); c++) {
+			if (m_cachedDisplay.at(i)[c] == 9) {
+				for (int k = 0; k < 4; k++) glutBitmapCharacter(m_font, 32); //Render tabs
+			} else {
+				//Render all other characters
+				glutBitmapCharacter(m_font, m_cachedDisplay.at(i)[c]);
+			}
 		}
 	}
 
@@ -51,10 +48,11 @@ void TextWindow::resize(GLint w, GLint h) {
 }
 
 void TextWindow::keyboardCallback(int key) {
-	std::string& _targetStr = m_cachedDisplay.at(m_cursorRow).at(m_cursorSubRow);
+	
+	std::string& _targetStr = m_cachedDisplay.at(m_cursorRow);
 	if (key == 8) {
 		if (m_cursorCol == 0 && _targetStr.length() == 0)
-			m_cachedDisplay.at(m_cursorRow).at(m_cursorSubRow).erase(m_cursorSubRow);
+			m_cachedDisplay.erase(m_cachedDisplay.begin() + m_cursorRow);
 		else
 			_targetStr.erase(m_cursorCol - 1);
 	} else if (key == 13) {
@@ -85,7 +83,7 @@ void TextWindow::specialFuncCallback(int key) {
 	case GLUT_KEY_RIGHT:
 	{
 		m_cursorCol++;
-		int len = m_cachedDisplay.at(m_cursorRow).at(m_cursorSubRow).length();
+		int len = m_cachedDisplay.at(m_cursorRow).length();
 		if (m_cursorCol > len - 1) m_cursorCol = len - 1;
 		break;
 	}
@@ -141,6 +139,8 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 		m_rightMouseDown = (state == GLUT_KEY_DOWN);
 		break;
 	}
+	if (state == GLUT_KEY_UP) return;
+
 	m_mousePos[0] = x;
 	m_mousePos[1] = y;
 
@@ -152,26 +152,13 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 	y /= glutBitmapHeight(m_font);
 	y++;
 
-	int sum{ 0 }, i{ 0 }, j{ 0 }, c{ 0 }, pixels{ 0 };
+	int c{ 0 }, pixels{ 0 };
 	bool done = false;
 
-	while (sum < y && !done) {
-		if (j < m_cachedDisplay.at(i).size() - 1) {
-			j++;
-			sum++;
-		} else {
-			if (i < m_cachedDisplay.size() - 1) {
-				i++;
-				sum++;
-				j = 0;
-			} else {
-				done = true;
-			}
-		}
-	}
+	if (y >= m_cachedDisplay.size()) y = m_cachedDisplay.size() - 1;
 
-	for (; c < m_cachedDisplay.at(i).at(j).length(); c++) {
-		char _char = m_cachedDisplay.at(i).at(j)[c];
+	for (; c < m_cachedDisplay.at(y).length(); c++) {
+		char _char = m_cachedDisplay.at(y)[c];
 		int w = glutBitmapWidth(m_font, _char);
 		if (_char == 9) w = glutBitmapWidth(m_font, ' ') * 4; //Fixes tabs
 
@@ -182,13 +169,12 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 
 		}
 	}
-	std::cout << m_cachedDisplay.at(i).at(j)[c] << std::endl;
+	std::cout << m_cachedDisplay.at(y)[c] << std::endl;
 
+	y--;
 	m_cursorX = pixels;
-	m_cursorY = (sum - 1) * glutBitmapHeight(m_font);
-
-	m_cursorRow = i;
-	m_cursorSubRow = j;
+	m_cursorY = y * glutBitmapHeight(m_font);
+	m_cursorRow = y;
 	m_cursorCol = c;
 
 }
@@ -232,21 +218,18 @@ void TextWindow::recalculate() {
 	int pos{ 0 };
 
 	//Handle new lines
-	m_cachedDisplay.push_back(std::vector<std::string>{m_text});
+	m_cachedDisplay.push_back(std::string{ m_text });
 
 	//pos becomes next occurrence of \n each loop. If no more are detected, we are done
-	//.at(0) corresponds to the first element in the nested vector, which is always the only element in the vector at this point
 	while ((pos = m_cachedDisplay
 		.at(m_cachedDisplay.size() - 1)
-		.at(0)
 		.find_first_of('\n')) != std::string::npos) {
 		//Split the last element of the vector with 2 elements; last becomes up until newline, next becomes everything else
 		//First char on each new line is tagged with a hidden control character
-		m_cachedDisplay.push_back(std::vector<std::string>{m_cachedDisplay
+		m_cachedDisplay.push_back(std::string{ m_cachedDisplay
 			.at(m_cachedDisplay.size() - 1)
-			.at(0)
-			.substr(pos + 1)}); // The + 1 skips the newline char
-		m_cachedDisplay.at(m_cachedDisplay.size() - 2).at(0) = m_cachedDisplay.at(m_cachedDisplay.size() - 2).at(0).substr(0, pos); //The first half
+			.substr(pos + 1) }); // The + 1 skips the newline char
+		m_cachedDisplay.at(m_cachedDisplay.size() - 2) = m_cachedDisplay.at(m_cachedDisplay.size() - 2).substr(0, pos); //The first half
 	}
 	//Handle word wrap
 
@@ -255,16 +238,15 @@ void TextWindow::recalculate() {
 	int _max_row_chars = (m_windowSize[0] - (m_textPadding[0] * 2)) / glutBitmapWidth(m_font, 'W');
 
 	for (int i = 0; i < m_cachedDisplay.size(); i++) {
-		for (int j = 0; j < m_cachedDisplay.at(i).size(); j++) {
-			if (m_cachedDisplay.at(i).at(j).length() > _max_row_chars) {
-				//Handle a word wrap
-				int _split_pos{ _max_row_chars };
+		if (m_cachedDisplay.at(i).length() > _max_row_chars) {
+			//Handle a word wrap
+			int _split_pos{ _max_row_chars };
 
-				//Backtrack from max chars in row until a whitespace
-				for (; _split_pos > 0 && !std::isspace(m_cachedDisplay.at(i).at(j).at(_split_pos)); _split_pos--);
-				m_cachedDisplay.at(i).insert(m_cachedDisplay.at(i).begin() + j + 1, m_cachedDisplay.at(i).at(j).substr(_split_pos + 1));
-				m_cachedDisplay.at(i).at(j) = m_cachedDisplay.at(i).at(j).substr(0, _split_pos);
-			}
+			//Backtrack from max chars in row until a whitespace
+			for (; _split_pos > 0 && !std::isspace(m_cachedDisplay.at(i).at(_split_pos)); _split_pos--);
+
+			m_cachedDisplay.insert(m_cachedDisplay.begin() + i + 1, m_cachedDisplay.at(i).substr(_split_pos + 1));
+			m_cachedDisplay.at(i) = m_cachedDisplay.at(i).substr(0, _split_pos);
 
 		}
 	}
