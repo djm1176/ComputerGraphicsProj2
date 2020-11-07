@@ -41,6 +41,7 @@
 void myInit();
 void myDisplayCallback();
 void keyboardCallback(unsigned char, int, int);
+void specialFuncCallback(int, int, int);
 void mouseCallback(int, int, int, int);
 void motionCallback(int, int);
 void reshapeCallback(int, int);
@@ -94,6 +95,7 @@ int main(int argc, char** argv) {
 
 	glutDisplayFunc(myDisplayCallback);  // register a callback
 	glutKeyboardFunc(keyboardCallback);
+	glutSpecialFunc(specialFuncCallback);
 	glutMouseFunc(mouseCallback);
 	glutMotionFunc(motionCallback);
 	glutReshapeFunc(reshapeCallback);
@@ -143,6 +145,10 @@ void helpDisplayCallback() {
 //***********************************************************************************
 void keyboardCallback(unsigned char key, int x, int y) {
 	text_window.keyboardCallback(key);
+}
+
+void specialFuncCallback(int key, int x, int y) {
+	text_window.specialFuncCallback(key);
 }
 
 //***********************************************************************************
