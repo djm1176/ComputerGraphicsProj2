@@ -20,6 +20,9 @@ public:
 	//Tell the TextWindow that a key was pressed
 	void keyboardCallback(int key);
 
+	//Callback for some special keys, such as Function and Numpad keys
+	void specialFuncCallback(int key);
+
 	//Tell the TextWindow that the mouse state changed at pixel coordinates (x, y)
 	void mouseCallback(int btn, int state, int x, int y);
 
@@ -46,7 +49,7 @@ private:
 	std::string m_text;
 
 	//Precomputed collection of strings that is used for displaying to the user
-	std::vector<std::vector<std::string>> m_cachedDisplay;
+	std::vector<std::string> m_cachedDisplay;
 
 	//The displayed text is offset by (x, y). This accounts for borders, padding, etc.
 	GLint m_offsetTextPos[2];
@@ -64,10 +67,20 @@ private:
 	GLubyte m_fontColor[3];
 
 	bool m_leftMouseDown, m_rightMouseDown;
-	int m_mousePos[2];
+	int m_mousePos[2];	
+
+	//Represents the location of the keyboard cursor in the cached display text
+	int m_cursorRow{ 0 }, m_cursorSubRow{ 0 }, m_cursorCol{ 0 }, m_cursorX{ 0 }, m_cursorY{ 0 };
+	//index of cursor position in vector
+	//index for char pos (x val)
+	//x & y are pix val
+	int m_cursorOffset{ 0 };
 
 	//Recalculates and updates internal properties that are used to display the text graphics
 	void recalculate();
+
+	//Store the current contents of the cached display string into the internal string
+	void serialize();
 
 private:
 	//TODO: All values in this field are for testing and should be replaced at some point
