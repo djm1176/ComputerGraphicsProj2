@@ -47,7 +47,6 @@ void TextWindow::resize(GLint w, GLint h) {
 	recalculate();
 }
 
-//do magic
 void TextWindow::keyboardCallback(int key) {
 	
 	std::string& _targetStr = m_cachedDisplay.at(m_cursorRow);
@@ -215,8 +214,15 @@ void TextWindow::setText(const std::string& text) {
 	recalculate();
 }
 
+//collapse vector into a string
 std::string TextWindow::getText() {
-	return m_text;
+	std::stringstream returnString;
+	for (unsigned i = 0; i < m_cachedDisplay.size(); i++)
+	{
+		returnString << m_cachedDisplay.at(i) << "\n";
+	}
+
+	return returnString.str();
 }
 
 void TextWindow::recalculate() {
