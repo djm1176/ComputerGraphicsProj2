@@ -45,9 +45,6 @@ public:
 	std::string getText();
 
 private:
-	//Source string that is edited by the user
-	std::string m_text;
-
 	//Precomputed collection of strings that is used for displaying to the user
 	std::vector<std::string> m_cachedDisplay;
 
@@ -77,10 +74,9 @@ private:
 	int m_cursorOffset{ 0 };
 
 	//Recalculates and updates internal properties that are used to display the text graphics
-	void recalculate();
-
-	//Store the current contents of the cached display string into the internal string
-	void serialize();
+	//The optional newStr parameter will replace the old contents of the cached displayed text.
+	//If newStr is empty, the cached displayed text holds its old contents.
+	void recalculate(const std::string& newStr = "");
 
 private:
 	//TODO: All values in this field are for testing and should be replaced at some point

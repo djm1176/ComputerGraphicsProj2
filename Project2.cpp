@@ -35,6 +35,8 @@
 #include <fstream>
 #include <stdexcept>
 
+#include "TextWindow.h"
+
 //********* Prototypes
 void myInit();
 void myDisplayCallback();
@@ -74,13 +76,6 @@ public:
 };
 
 //********* Globals
-
-// TODO: Could we give this a more distinctive name since it's a global? Maybe all caps or something like file_text
-std::string text = "Hello, world! This is a test with some text on screen. It is really sort of annoyingly long and it doesn't really mean anything, but it demonstrates how word wrapping should work.\nThis text should be on a new line.\n\nThis text is 2 lines below. Would you like a tab?\tThere's a tab.\n\tOh, what about a tab on a new line? Isn't that cool?";
-//std::string text = "\n"; //for testing
-//const std::string text = "Line 1\nLine 2\t<tab\n\nLine 3 with 1 empty line above\n\tLine 4 with tab at start";
-
-std::vector<std::string> disp_text;
 
 const GLint WINDOW_SIZE[]{ 800, 600 };
 const GLint HELP_SIZE[]{ 700, 300 };
@@ -160,6 +155,10 @@ int main(int argc, char** argv) {
 void myInit() {
 	glClearColor(0.1, 0.12, 0.12, 0);  // specify a background clor: white
 	gluOrtho2D(0, WINDOW_SIZE[0], WINDOW_SIZE[1], 0);  // specify a viewing area
+
+	text_window = TextWindow(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+	text_window.setPadding(24, 24);
+
 }
 //***********************************************************************************
 void menuInit() {
@@ -421,6 +420,6 @@ void save() {
 		outfile.close();
 		throw InvalidFileException(outFileName);
 	}
-	outfile << text;
+	outfile << text_window.getText();
 	outfile.close();
 }
