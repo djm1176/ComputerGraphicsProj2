@@ -62,6 +62,10 @@ void TextWindow::keyboardCallback(int key) {
 			m_cachedDisplay.erase(m_cachedDisplay.begin() + m_cursorRow);
 			m_cursorRow--; //Move the cursor's row to the line above last
 		}
+		else if (m_cursorCol == 0 && m_cursorRow == 0)
+		{
+			//do nothing
+		}
 		else {
 			//Cursor in middle of row somewhere...
 			_targetStr.erase(m_cursorCol - 1, 1);
