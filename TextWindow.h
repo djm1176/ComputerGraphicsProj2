@@ -9,7 +9,7 @@ public:
 	TextWindow() = default;
 
 	//Construct a TextWindow with a width and height
-	TextWindow(int w, int h);
+	TextWindow(int w, int h, int padW = 0, int padH = 0);
 
 	//Render the TextWindow
 	void render();
@@ -48,14 +48,11 @@ private:
 	//Precomputed collection of strings that is used for displaying to the user
 	std::vector<std::string> m_cachedDisplay;
 
-	//The displayed text is offset by (x, y). This accounts for borders, padding, etc.
-	GLint m_offsetTextPos[2];
-
 	//The size of the TextEditor window
 	GLint m_windowSize[2];
 
 	//The padding in pixels between top left corner and where text is displayed
-	GLint m_textPadding[2];
+	GLint m_textPadding[2]{ 0, 0 };
 
 	//The font used to render the text
 	void* m_font = GLUT_BITMAP_9_BY_15;

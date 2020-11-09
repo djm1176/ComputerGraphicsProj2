@@ -2,7 +2,9 @@
 #include <iostream>
 #include <sstream>
 
-TextWindow::TextWindow(int w, int h) {
+TextWindow::TextWindow(int w, int h, int padW, int padH) {
+	m_textPadding[0] = padW;
+	m_textPadding[1] = padH;
 	resize(w, h);
 }
 
@@ -16,7 +18,7 @@ void TextWindow::render() {
 		//Render line number on left-hand side.
 		glRasterPos2i(4, i * glutBitmapHeight(m_font) + m_textPadding[1]);
 		glColor3ubv(FONT_COLOR_DIM);
-		glutBitmapString(m_font, (unsigned char*)std::to_string(i).c_str());
+		glutBitmapString(m_font, (unsigned char*)std::to_string(i + 1).c_str());
 
 		glColor3ubv(FONT_COLOR_TEXT);
 		glRasterPos2i(m_textPadding[0], i * glutBitmapHeight(m_font) + m_textPadding[1]);
@@ -54,29 +56,37 @@ void TextWindow::keyboardCallback(int key) {
 		//Backspace -- m_cursorRow cannot be < 1 (We cannot backspace at top left)
 		if (m_cursorCol == 0 && m_cursorRow > 0) {
 			//Cursor is at front of this row; remove the new line, and append this row to the above row
+			m_cursorCol = m_cachedDisplay.at(m_cursorRow - 1).length() - 1; //Put the cursor at the end of the row above
 			m_cachedDisplay.at(m_cursorRow - 1) += _targetStr;
 			//Remove old line
 			m_cachedDisplay.erase(m_cachedDisplay.begin() + m_cursorRow);
+			m_cursorRow--; //Move the cursor's row to the line above last
 		}
 		else {
 			//Cursor in middle of row somewhere...
 			_targetStr.erase(m_cursorCol - 1, 1);
+			m_cursorCol--;
 		}
 	}
 	else if (key == 13) {
 		//Newline
 		_targetStr.insert(m_cursorCol, "\n");
+		m_cursorRow++;
+		m_cursorCol = 0;
 	}
 	else if (key == 9) {
 		//Tab
 		_targetStr.insert(m_cursorCol, "\t");
+		m_cursorCol++;
 	}
 	else if (key < 32) {
 		//TODO: this if block is for debugging, remove this block!
 		_targetStr.insert(m_cursorCol, "<" + std::to_string(key) + ">");
 	}
 	else {
-		_targetStr.insert(m_cursorCol, 1, (char)key);
+		_targetStr.insert(_targetStr.begin() + m_cursorCol, (char)key);
+		//_targetStr.insert(m_cursorCol, 1, (char)key);
+		m_cursorCol++;
 	}
 
 	recalculate();
@@ -179,7 +189,7 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 	y--;
 	m_cursorX = pixels;
 	m_cursorY = y * glutBitmapHeight(m_font);
-	m_cursorRow = y;
+	m_cursorRow = y + 1;
 	m_cursorCol = c;
 
 }
@@ -218,7 +228,8 @@ std::string TextWindow::getText() {
 	std::stringstream returnString;
 	for (unsigned i = 0; i < m_cachedDisplay.size(); i++)
 	{
-		returnString << m_cachedDisplay.at(i) << "\n";
+		//Don't add a new line on the last line; the user must do this manually
+		returnString << m_cachedDisplay.at(i) << (i == m_cachedDisplay.size() - 1 ?  "" : "\n");
 	}
 
 	return returnString.str();
@@ -267,4 +278,12 @@ void TextWindow::recalculate(const std::string &newStr) {
 		}
 	}
 
+	//Update the keyboard cursor's pixel coordinates
+	m_cursorY = (m_cursorRow - 1) * glutBitmapHeight(m_font);
+	//We assume that the cachedDisplay ALWAYS has at least 1 element and cursorCol is less than the length of current cursorRow
+	m_cursorX = 0;
+	for (int i = 0; i < m_cursorCol; i++) {
+		m_cursorX += glutBitmapWidth(m_font, m_cachedDisplay.at(m_cursorRow)[i]);
+	}
+	
 }

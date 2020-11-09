@@ -158,8 +158,7 @@ void myInit() {
 	glClearColor(0.1, 0.12, 0.12, 0);  // specify a background clor: white
 	gluOrtho2D(0, WINDOW_SIZE[0], WINDOW_SIZE[1], 0);  // specify a viewing area
 
-	text_window = TextWindow(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-	text_window.setPadding(24, 24);
+	text_window = TextWindow(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 24, 24);
 
 }
 //***********************************************************************************
