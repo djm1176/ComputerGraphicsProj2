@@ -52,19 +52,27 @@ void TextWindow::keyboardCallback(int key) {
 	
 	std::string& _targetStr = m_cachedDisplay.at(m_cursorRow);
 	if (key == 8) {
-		//New line
-		if (m_cursorCol == 0 && _targetStr.length() == 0)
+		//Backspace -- m_cursorRow cannot be < 1 (We cannot backspace at top left)
+		if (m_cursorCol == 0 && m_cursorRow > 0) {
+			//Cursor is at front of this row; remove the new line, and append this row to the above row
+			m_cachedDisplay.at(m_cursorRow - 1) += _targetStr;
+			//Remove old line
 			m_cachedDisplay.erase(m_cachedDisplay.begin() + m_cursorRow);
-		else
-			_targetStr.erase(_targetStr.begin() + m_cursorCol);
+		}
+		else {
+			//Cursor in middle of row somewhere...
+			_targetStr.erase(m_cursorCol - 1, 1);
+		}
 	}
 	else if (key == 13) {
+		//Newline
 		_targetStr.insert(m_cursorCol, "\n");
 	}
 	else if (key == 9) {
+		//Tab
 		_targetStr.insert(m_cursorCol, "\t");
 	}
-	else if (key < 31) {
+	else if (key < 32) {
 		//TODO: this if block is for debugging, remove this block!
 		_targetStr.insert(m_cursorCol, "<" + std::to_string(key) + ">");
 	}
@@ -72,7 +80,6 @@ void TextWindow::keyboardCallback(int key) {
 		_targetStr.insert(m_cursorCol, 1, (char)key);
 	}
 
-	serialize();
 	recalculate();
 	render();
 	glFlush();
@@ -125,14 +132,6 @@ void TextWindow::specialFuncCallback(int key) {
 	}
 	render();
 	glFlush();
-}
-
-void TextWindow::serialize() {
-	std::stringstream ss;
-	for (int i = 0; i < m_cachedDisplay.size(); i++) {
-			ss << m_cachedDisplay.at(i) << "\n";
-	}
-	m_text = ss.str();
 }
 
 void TextWindow::mouseCallback(int btn, int state, int x, int y) {
@@ -211,21 +210,24 @@ void TextWindow::setColor(GLubyte* col) {
 
 
 void TextWindow::setText(const std::string& text) {
-	m_text = text;
-	recalculate();
+	recalculate(text);
 }
 
 std::string TextWindow::getText() {
-	return m_text;
+	
 }
 
-void TextWindow::recalculate() {
-	//Make the vector store a new version with word wrapping and new lines
+void TextWindow::recalculate(const std::string &newStr) {
+	//Recalculate the contents of the vector by copying its old (or optional new) value, and inserting new lines (word wrap)
+
+	//If the optional parameter is empty, use old text. If not empty, use passed parameter
+	std::string temp = (newStr == "" ? getText() : newStr);
 	m_cachedDisplay.clear();
+	
 	int pos{ 0 };
 
 	//Handle new lines
-	m_cachedDisplay.push_back(std::string{ m_text });
+	m_cachedDisplay.push_back(std::string{ temp });
 
 	//pos becomes next occurrence of \n each loop. If no more are detected, we are done
 	while ((pos = m_cachedDisplay
