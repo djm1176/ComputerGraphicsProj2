@@ -47,6 +47,7 @@ void TextWindow::resize(GLint w, GLint h) {
 	recalculate();
 }
 
+//do magic
 void TextWindow::keyboardCallback(int key) {
 	
 	std::string& _targetStr = m_cachedDisplay.at(m_cursorRow);
@@ -55,15 +56,19 @@ void TextWindow::keyboardCallback(int key) {
 		if (m_cursorCol == 0 && _targetStr.length() == 0)
 			m_cachedDisplay.erase(m_cachedDisplay.begin() + m_cursorRow);
 		else
-			_targetStr.erase(m_cursorCol - 1);
-	} else if (key == 13) {
+			_targetStr.erase(_targetStr.begin() + m_cursorCol);
+	}
+	else if (key == 13) {
 		_targetStr.insert(m_cursorCol, "\n");
-	} else if (key == 9) {
+	}
+	else if (key == 9) {
 		_targetStr.insert(m_cursorCol, "\t");
-	} else if (key < 31) {
+	}
+	else if (key < 31) {
 		//TODO: this if block is for debugging, remove this block!
 		_targetStr.insert(m_cursorCol, "<" + std::to_string(key) + ">");
-	} else {
+	}
+	else {
 		_targetStr.insert(m_cursorCol, 1, (char)key);
 	}
 
