@@ -3,11 +3,12 @@
 #include <vector>
 #include <string>
 
-class TextWindow {
+class TextWindow
+{
 
 public:
 	TextWindow() = default;
-
+	GLubyte FONT_COLOR_TEXT[3]{204, 204, 204};
 	//Construct a TextWindow with a width and height
 	TextWindow(int w, int h);
 
@@ -27,16 +28,16 @@ public:
 	void motionCallback(int x, int y);
 
 	//Change the font displayed to a new GL font
-	void setFont(void* font);
+	void setFont(void *font);
 
 	//Change the padding of the text on all sides by (w, h)
 	void setPadding(int w, int h);
 
 	//Change the font color to a new RGB (0-255) color
-	void setColor(GLubyte* col);
+	void setColor(GLubyte *col);
 
 	//Set the window's text to the provided string
-	void setText(const std::string& text);
+	void setText(const std::string &text);
 
 	//Returns the text within the text editor
 	std::string getText();
@@ -58,7 +59,7 @@ private:
 	GLint m_textPadding[2];
 
 	//The font used to render the text
-	void* m_font = GLUT_BITMAP_9_BY_15;
+	void *m_font = GLUT_BITMAP_9_BY_15;
 
 	//The font color used to render the text
 	GLubyte m_fontColor[3];
@@ -72,8 +73,5 @@ private:
 private:
 	//TODO: All values in this field are for testing and should be replaced at some point
 
-	GLubyte FONT_COLOR_TEXT[3]{ 204, 204, 204 };
-	GLubyte FONT_COLOR_DIM[3]{ 190, 190, 190 };
-
+	GLubyte FONT_COLOR_DIM[3]{190, 190, 190};
 };
-

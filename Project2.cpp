@@ -27,7 +27,7 @@
 		2.		Press Ctrl+F7 to COMPILE
 		3.		Press Ctrl+F5 to EXECUTE
 ==================================================================================================*/
-#include <GL/freeglut.h>  // include GLUT library
+#include <GL/freeglut.h> // include GLUT library
 
 #include <string>
 #include <iostream>
@@ -53,21 +53,24 @@ void save();
 void recalculateDisplayString(int, int);
 
 //********* Types
-struct MousePosition {
+struct MousePosition
+{
 	float x_coord;
 	float y_coord;
 
-	explicit MousePosition(float x_coord, float y_coord) : x_coord{ x_coord },
-		y_coord{ y_coord }
+	explicit MousePosition(float x_coord, float y_coord) : x_coord{x_coord},
+														   y_coord{y_coord}
 	{
 		// Intentionally empty due to using MIL
 	}
 };
 
-class InvalidFileException : public std::runtime_error {
+class InvalidFileException : public std::runtime_error
+{
 public:
-	explicit InvalidFileException(const std::string& message = "")
-		: std::runtime_error("Invalid file " + message + " either does not exist or could not be opened.") {
+	explicit InvalidFileException(const std::string &message = "")
+		: std::runtime_error("Invalid file " + message + " either does not exist or could not be opened.")
+	{
 		// Empty due to using MIL
 	}
 };
@@ -80,15 +83,15 @@ std::string text = "Hello, world! This is a test with some text on screen. It is
 
 std::vector<std::string> disp_text;
 
-const GLint WINDOW_SIZE[]{ 800, 600 };
-const GLint HELP_SIZE[]{ 700, 300 };
-const GLint ORIGIN_OFFSET[]{ 32, 24 };
+const GLint WINDOW_SIZE[]{800, 600};
+const GLint HELP_SIZE[]{700, 300};
+const GLint ORIGIN_OFFSET[]{32, 24};
 
 MousePosition mouse_position = MousePosition(0.0, 70.0);
 int cursor_position = 0;
 int fontChoise = 0;
 int colorChoice = 0;
-void* GLOBAL_FONT[] = { GLUT_BITMAP_9_BY_15,GLUT_BITMAP_TIMES_ROMAN_10,GLUT_BITMAP_HELVETICA_10 };
+void *GLOBAL_FONT[] = {GLUT_BITMAP_9_BY_15, GLUT_BITMAP_TIMES_ROMAN_10, GLUT_BITMAP_HELVETICA_10};
 bool leftButton = false;
 bool rightButton = false;
 
@@ -96,45 +99,69 @@ int mainWindow;
 int helpWindow;
 
 //********* Subroutines
-void mainMenuHandler(int choice) {
+void mainMenuHandler(int choice)
+{
 }
-void fontMenuHandler(int choice) {
+void fontMenuHandler(int choice)
+{
 	fontChoise = choice;
+	text_window.setFont(GLOBAL_FONT[choice]);
 	myDisplayCallback();
 }
-void colorMenuHandler(int choice) {
-	colorChoice = choice;
+void colorMenuHandler(int choice)
+{
+
+	if (choice == 0)
+	{
+		GLubyte col[] = {GLubyte(204), GLubyte(204), GLubyte(204)};
+		text_window.setColor(col);
+	}
+	else if (choice == 1)
+	{
+		GLubyte col[] = {GLubyte(255), GLubyte(0), GLubyte(0)};
+		text_window.setColor(col);
+	}
+	else if (choice == 2)
+	{
+		GLubyte col[] = {GLubyte(0), GLubyte(0), GLubyte(255)};
+		text_window.setColor(col);
+	}
 	myDisplayCallback();
 }
-void helpMenuHandler(int choice) {
+void helpMenuHandler(int choice)
+{
 	glutSetWindow(helpWindow);
-	if (choice == 1) {
+	if (choice == 1)
+	{
 		glutShowWindow();
 	}
-	else if (choice == 0) {
+	else if (choice == 0)
+	{
 		glutHideWindow();
 	}
-	
 }
-void saveMenuHandler(int choice) {
+void saveMenuHandler(int choice)
+{
 	save();
 }
-void exitMenuHandler(int choice) {
+void exitMenuHandler(int choice)
+{
 	exit(choice);
 }
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
 
-	glutInit(&argc, argv);  // initialization
+	glutInit(&argc, argv); // initialization
 
-	glutInitWindowSize(WINDOW_SIZE[0], WINDOW_SIZE[1]);                // specify a window size
-	glutInitWindowPosition(0, 0);              // specify a window position
-	mainWindow = glutCreateWindow("GLUT Text Editor");  // create a titled window
+	glutInitWindowSize(WINDOW_SIZE[0], WINDOW_SIZE[1]); // specify a window size
+	glutInitWindowPosition(0, 0);						// specify a window position
+	mainWindow = glutCreateWindow("GLUT Text Editor");	// create a titled window
 
-	myInit();  // specify some settings
+	myInit(); // specify some settings
 
 	menuInit();
 
-	glutDisplayFunc(myDisplayCallback);  // register a callback
+	glutDisplayFunc(myDisplayCallback); // register a callback
 	glutKeyboardFunc(keyboardCallback);
 	glutMouseFunc(mouseCallback);
 	glutMotionFunc(motionCallback);
@@ -148,18 +175,20 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(helpDisplayCallback);
 	glutKeyboardFunc(helpKeyboardCallback);
 
-	glutMainLoop();  // get into an infinite loop
+	glutMainLoop(); // get into an infinite loop
 
-	return 1;  // something wrong happened
+	return 1; // something wrong happened
 }
 
 //***********************************************************************************
-void myInit() {
-	glClearColor(0.1, 0.12, 0.12, 0);  // specify a background clor: white
-	gluOrtho2D(0, WINDOW_SIZE[0], WINDOW_SIZE[1], 0);  // specify a viewing area
+void myInit()
+{
+	glClearColor(0.1, 0.12, 0.12, 0);				  // specify a background clor: white
+	gluOrtho2D(0, WINDOW_SIZE[0], WINDOW_SIZE[1], 0); // specify a viewing area
 }
 //***********************************************************************************
-void menuInit() {
+void menuInit()
+{
 	int fontSubMenu = glutCreateMenu(fontMenuHandler);
 	glutAddMenuEntry("Default", 0);
 	glutAddMenuEntry("Times Roman", 1);
@@ -185,61 +214,72 @@ void menuInit() {
 	glutCreateMenu(mainMenuHandler);
 }
 //***********************************************************************************
-void myDisplayCallback() {
-	glClear(GL_COLOR_BUFFER_BIT);  // draw the background
+void myDisplayCallback()
+{
+	glClear(GL_COLOR_BUFFER_BIT); // draw the background
 
 	draw();
 
-	glFlush();  // flush out the buffer contents
+	glFlush(); // flush out the buffer contents
 }
 //***********************************************************************************
-void helpDisplayCallback() {
-	glClear(GL_COLOR_BUFFER_BIT);  // draw the background
+void helpDisplayCallback()
+{
+	glClear(GL_COLOR_BUFFER_BIT); // draw the background
 
 	drawHelp();
 
-	glFlush();  // flush out the buffer contents
+	glFlush(); // flush out the buffer contents
 	glutSwapBuffers();
 }
 
 //***********************************************************************************
-void keyboardCallback(unsigned char key, int x, int y) {
+void keyboardCallback(unsigned char key, int x, int y)
+{
 
 	//Note: keys 9 and 13 are defined explicitly. That's not necessary if you remove the "key < 31" block, that's for debugging.
 
 	//TODO: Add support for:
-		//CTRL+A = (char)1
-		//CTRL+C = (char)3
-		//CTRL+V = (char)22
-		//Possibly an undo stack??!?!?!?!?! CTRL+Z?
+	//CTRL+A = (char)1
+	//CTRL+C = (char)3
+	//CTRL+V = (char)22
+	//Possibly an undo stack??!?!?!?!?! CTRL+Z?
 
 	//TODO: This is very strange, but pressing the ctrl key with another key changes the value of
 	// the key parameter, so I'm just using ALT for now, since it's the only one that allows 's' to be
 	// seen unaltered.
 	int mod = glutGetModifiers();
-	if (key == 's' && mod == GLUT_ACTIVE_ALT) {
-		try {
+	if (key == 's' && mod == GLUT_ACTIVE_ALT)
+	{
+		try
+		{
 			save();
 		}
-		catch (const InvalidFileException& err) {
+		catch (const InvalidFileException &err)
+		{
 			// TODO figure out better file handling
 			std::cout << err.what() << std::endl;
 		}
 	}
-	else if (key == 8) {
+	else if (key == 8)
+	{
 		text = text.substr(0, text.length() - 1);
 	}
-	else if (key == 13) {
+	else if (key == 13)
+	{
 		text += '\n';
 	}
-	else if (key == 9) {
+	else if (key == 9)
+	{
 		text += '\t';
 	}
-	else if (key < 31) {
+	else if (key < 31)
+	{
 		//TODO: this if block is for debugging, remove this block!
 		text += "<" + std::to_string(key) + ">";
 	}
-	else {
+	else
+	{
 		text += key;
 	}
 	recalculateDisplayString(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
@@ -248,8 +288,10 @@ void keyboardCallback(unsigned char key, int x, int y) {
 }
 
 //***********************************************************************************
-void helpKeyboardCallback(unsigned char key, int x, int y) {
-	switch (key) {
+void helpKeyboardCallback(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
 	case 81:
 	case 113:
 		glutHideWindow();
@@ -258,35 +300,37 @@ void helpKeyboardCallback(unsigned char key, int x, int y) {
 }
 
 //***********************************************************************************
-void mouseCallback(int button, int state, int x, int y) {
-
+void mouseCallback(int button, int state, int x, int y)
+{
 }
 
 //***********************************************************************************
-void motionCallback(int x, int y) {
-
+void motionCallback(int x, int y)
+{
 }
 
-void reshapeCallback(int w, int h) {
+void reshapeCallback(int w, int h)
+{
 	//Window resized, recalculate display
 	recalculateDisplayString(w, h);
-
 }
 
-void recalculateDisplayString(int w, int h) {
+void recalculateDisplayString(int w, int h)
+{
 	//Make the vector store a new version with word wrapping and new lines
 
 	disp_text.clear(); //Does not guarantee reallocation
-	int pos{ 0 };
+	int pos{0};
 
 	//Handle new lines
 	disp_text.push_back((char)31 + text);
 
 	//pos becomes next occurrence of \n each loop. If no more are detected, we are done
-	while ((pos = disp_text.at(disp_text.size() - 1).find_first_of('\n')) != std::string::npos) {
+	while ((pos = disp_text.at(disp_text.size() - 1).find_first_of('\n')) != std::string::npos)
+	{
 		//Split the last element of the vector with 2 elements; last becomes up until newline, next becomes everything else
 		//First char on each new line is tagged with a hidden control character
-		disp_text.push_back((char)31 + disp_text.at(disp_text.size() - 1).substr(pos + 1)); //The last half ( + 1 'skips' the newline)
+		disp_text.push_back((char)31 + disp_text.at(disp_text.size() - 1).substr(pos + 1));		//The last half ( + 1 'skips' the newline)
 		disp_text.at(disp_text.size() - 2) = disp_text.at(disp_text.size() - 2).substr(0, pos); //The first half
 	}
 
@@ -297,12 +341,15 @@ void recalculateDisplayString(int w, int h) {
 	//NOTE: 'W' is a pretty wide character; that is the reason for using its width for this calculation
 	int MAX_ROW_CHARS = (w - 50) / glutBitmapWidth(GLOBAL_FONT[fontChoise], 'W');
 
-	for (int i = 0; i < disp_text.size(); i++) {
-		if (disp_text[i].length() > MAX_ROW_CHARS) {
+	for (int i = 0; i < disp_text.size(); i++)
+	{
+		if (disp_text[i].length() > MAX_ROW_CHARS)
+		{
 			//Handle a word wrap
-			int split_pos{ MAX_ROW_CHARS };
+			int split_pos{MAX_ROW_CHARS};
 			//Backtrack from max chars in row until a whitespace
-			for (; split_pos > 0 && !std::isspace(disp_text[i][split_pos]); split_pos--);
+			for (; split_pos > 0 && !std::isspace(disp_text[i][split_pos]); split_pos--)
+				;
 
 			disp_text.insert(disp_text.begin() + i + 1, disp_text[i].substr(split_pos + 1));
 			disp_text[i] = disp_text[i].substr(0, split_pos);
@@ -311,7 +358,8 @@ void recalculateDisplayString(int w, int h) {
 }
 
 //Draws the interface that surrounds the text display
-void renderInterface() {
+void renderInterface()
+{
 	//TODO: Render keyboard cursor, possibly add a blinking effect?
 	const int _height = glutGet(GLUT_WINDOW_HEIGHT);
 
@@ -325,7 +373,8 @@ void renderInterface() {
 }
 
 //Renders the contents of the string on screen
-void renderFileText() {
+void renderFileText()
+{
 	const int _height = glutGet(GLUT_WINDOW_HEIGHT);
 
 	glColor3f(0.08, 0.1, 0.1);
@@ -336,54 +385,63 @@ void renderFileText() {
 	glVertex2i(0, _height);
 	glEnd();
 
-
-	for (int i = 0, line = 0; i < disp_text.size(); i++) {
-		if (disp_text[i][0] == (char)31) {
+	for (int i = 0, line = 0; i < disp_text.size(); i++)
+	{
+		if (disp_text[i][0] == (char)31)
+		{
 			//This is a true 'newline', label such on the left
 			//NOTE: The (WINDOW_SIZE[1] = _height) is because gluOrtho2d doesn't let you "anchor" to the top when changing screen size
 			std::string line_num_str = std::to_string(line);
 			glColor3f(0.5, 0.5, 0.5); //TODO: Make line number color constant
 			glRasterPos2i((ORIGIN_OFFSET[0] / 2) - (line_num_str.length() * glutBitmapWidth(GLOBAL_FONT[fontChoise], 'W') / 2), i * glutBitmapHeight(GLOBAL_FONT) + ORIGIN_OFFSET[1] + (WINDOW_SIZE[1] - _height));
-			glutBitmapString(GLOBAL_FONT[fontChoise], (const unsigned char*)line_num_str.c_str());
+			glutBitmapString(GLOBAL_FONT[fontChoise], (const unsigned char *)line_num_str.c_str());
 			line++;
 		}
-		if (colorChoice == 0) {
+		if (colorChoice == 0)
+		{
 			glColor3f(0.8, 0.8, 0.8); //TODO: Make font color constant
 		}
-		else if (colorChoice == 1) {
-			glColor3f(1,0, 0); 
+		else if (colorChoice == 1)
+		{
+			glColor3f(1, 0, 0);
 		}
-		else if (colorChoice == 2) {
+		else if (colorChoice == 2)
+		{
 			glColor3f(0, 0, 1);
 		}
-		
+
 		glRasterPos2i(ORIGIN_OFFSET[0] + 4, i * glutBitmapHeight(GLOBAL_FONT[fontChoise]) + ORIGIN_OFFSET[1] + (WINDOW_SIZE[1] - _height));
 		for (int j = 0; j < disp_text[i].length(); j++)
-			if (disp_text[i][j] == 9) {
+			if (disp_text[i][j] == 9)
+			{
 				//Tab character
-				for (int k = 0; k < 4; k++) glutBitmapCharacter(GLOBAL_FONT[fontChoise], ' ');
+				for (int k = 0; k < 4; k++)
+					glutBitmapCharacter(GLOBAL_FONT[fontChoise], ' ');
 			}
-			else if (disp_text[i][j] > 31) {
+			else if (disp_text[i][j] > 31)
+			{
 				glutBitmapCharacter(GLOBAL_FONT[fontChoise], disp_text[i][j]);
 			}
 	}
 }
 
 //***********************************************************************************
-void draw() {
+void draw()
+{
 	renderInterface();
 	renderFileText();
 }
 
 //***********************************************************************************
-void drawHelp() {
+void drawHelp()
+{
 
-	std::string helpItems[10] = { "Welcome to the GLUT Text Editor, Version 1.0, November 2020",
-	"To change properties about the text, right click the editor to view the menu",
-	"   Select 'Font' to change the font", "   Select 'Color' to change the text color",
-	"   Select 'Help' to return to this help window", "   Select 'Save' to save the text to a file",
-	"   Select 'Exit' to leave the program", "Keyboard Shortcuts:", "   CTRL + S to save the file",
-	"   CTRL + H for help" }; //
+	std::string helpItems[10] = {"Welcome to the GLUT Text Editor, Version 1.0, November 2020",
+								 "To change properties about the text, right click the editor to view the menu",
+								 "   Select 'Font' to change the font", "   Select 'Color' to change the text color",
+								 "   Select 'Help' to return to this help window", "   Select 'Save' to save the text to a file",
+								 "   Select 'Exit' to leave the program", "Keyboard Shortcuts:", "   CTRL + S to save the file",
+								 "   CTRL + H for help"}; //
 
 	std::string saveLoc = "The saved file is stored at C:\\Temp\\typed.txt";
 	std::string done = "Press Q to terminate the help screen and to return to the editor.";
@@ -395,10 +453,10 @@ void drawHelp() {
 
 	drawHelpText(saveLoc, 0, 10, 530);
 	drawHelpText(done, 0, 10, 575);
-
 }
 
-void drawHelpText(std::string text, int length, int x, int y) {
+void drawHelpText(std::string text, int length, int x, int y)
+{
 	glColor3f(0.8, 0.8, 0.8);
 	glRasterPos2i(x, y);
 	for (auto c : text)
@@ -407,10 +465,12 @@ void drawHelpText(std::string text, int length, int x, int y) {
 	}
 }
 
-void save() {
+void save()
+{
 	std::string outFileName = "C:\\Temp\\type.txt";
 	std::ofstream outfile(outFileName);
-	if (!outfile.is_open()) {
+	if (!outfile.is_open())
+	{
 		outfile.close();
 		throw InvalidFileException(outFileName);
 	}
