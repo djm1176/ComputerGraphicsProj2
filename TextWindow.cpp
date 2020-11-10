@@ -18,7 +18,7 @@ void TextWindow::render() {
 		glColor3ubv(FONT_COLOR_DIM);
 		glutBitmapString(m_font, (unsigned char*)std::to_string(i).c_str());
 
-		glColor3ubv(FONT_COLOR_TEXT);
+		glColor3ubv(m_fontColor);
 		glRasterPos2i(m_textPadding[0], i * glutBitmapHeight(m_font) + m_textPadding[1]);
 
 		for (int c = 0; c < m_cachedDisplay.at(i).length(); c++) {
@@ -51,12 +51,24 @@ void TextWindow::keyboardCallback(int key) {
 	
 	std::string& _targetStr = m_cachedDisplay.at(m_cursorRow);
 	if (key == 8) {
+		if (m_cursorCol < 0) m_cursorCol = 0;
 		//Backspace -- m_cursorRow cannot be < 1 (We cannot backspace at top left)
-		if (m_cursorCol == 0 && m_cursorRow > 0) {
+		if (m_cursorCol == 0 && m_cursorRow > 0 && m_cachedDisplay.size() > 0) {
 			//Cursor is at front of this row; remove the new line, and append this row to the above row
+<<<<<<< Updated upstream
 			m_cachedDisplay.at(m_cursorRow - 1) += _targetStr;
 			//Remove old line
 			m_cachedDisplay.erase(m_cachedDisplay.begin() + m_cursorRow);
+=======
+			m_cursorCol = m_cachedDisplay.at(m_cursorRow - 1).length(); //Put the cursor at the end of the row above
+			m_cachedDisplay.at(m_cursorRow - 1) += _targetStr;
+			//Remove old line
+			m_cachedDisplay.erase(m_cachedDisplay.begin() + m_cursorRow);
+			m_cursorRow--; //Move the cursor's row to the line above last
+		}
+		else if (m_cursorCol == 0 && m_cursorRow == 0) {
+			//do nothing
+>>>>>>> Stashed changes
 		}
 		else {
 			//Cursor in middle of row somewhere...
@@ -89,46 +101,59 @@ void TextWindow::specialFuncCallback(int key) {
 	case GLUT_KEY_LEFT:
 	{
 		m_cursorCol--;
-		if (m_cursorCol < 0) m_cursorCol = 0;
+		if (m_cursorCol < 0) {
+			if (m_cursorRow > 0) {
+				m_cursorRow--;
+				m_cursorCol = m_cachedDisplay.at(m_cursorRow).length() - 1; //Move cursor to far right of row above
+			} else {
+				m_cursorCol = 0; //At far left; don't do anything.
+			}
+		}
 		break;
 	}
 	case GLUT_KEY_RIGHT:
 	{
 		m_cursorCol++;
 		int len = m_cachedDisplay.at(m_cursorRow).length();
-		if (m_cursorCol > len - 1) m_cursorCol = len - 1;
+		if (m_cursorCol >= len + 1) {
+			if (m_cursorRow >= m_cachedDisplay.size() - 1) {
+				m_cursorCol = len; //At bottom right of text, don't do anything.
+			} else {
+				//Move cursor to far left of row below
+				m_cursorRow++;
+				m_cursorCol = 0;
+			}
+		}
 		break;
 	}
 	case GLUT_KEY_UP:
 	{
-		m_cursorSubRow--;
-		if (m_cursorSubRow < 0) {
-			if (m_cursorRow > 0) {
-				m_cursorRow--;
-				m_cursorSubRow = m_cachedDisplay.at(m_cursorRow).size() - 1;
-			} else {
-				m_cursorSubRow = 0;
-			}
+		m_cursorRow--;
+		if (m_cursorRow < 0) {
+			m_cursorRow = 0; //At top of text, don't do anything.
+		}
+		if (m_cursorCol >= m_cachedDisplay.at(m_cursorRow).length()) {
+			//We went up a row, but the row above is shorter. Make the column at the end of the row above
+			m_cursorCol = m_cachedDisplay.at(m_cursorRow).length();
 		}
 		break;
 	}
 	case GLUT_KEY_DOWN:
 	{
-		m_cursorSubRow++;
-		int len = m_cachedDisplay.at(m_cursorRow).size();
-		if (m_cursorSubRow > len) {
-			if (m_cursorRow < m_cachedDisplay.size()) {
-				m_cursorRow++;
-				m_cursorSubRow = 0;
-			} else {
-				m_cursorSubRow = len - 1;
-			}
+		m_cursorRow++;
+		if (m_cursorRow >= m_cachedDisplay.size()) {
+			m_cursorRow = m_cachedDisplay.size() - 1; //At bottom of text, don't do anything.
+		}
+		if (m_cursorCol >= m_cachedDisplay.at(m_cursorRow).length()) {
+			//We went down a row, but the row below is shorter. Make the column at the end of the row above
+			m_cursorCol = m_cachedDisplay.at(m_cursorRow).length();
 		}
 		break;
 	}
 	default:
 		return;
 	}
+	recalculate();
 	render();
 	glFlush();
 }
@@ -267,4 +292,32 @@ void TextWindow::recalculate(const std::string &newStr) {
 		}
 	}
 
+<<<<<<< Updated upstream
+=======
+	//Update the keyboard cursor's pixel coordinates
+	m_cursorY = (m_cursorRow - 1) * glutBitmapHeight(m_font);
+	//We assume that the cachedDisplay ALWAYS has at least 1 element and cursorCol is less than the length of current cursorRow
+	m_cursorX = 0;
+	for (int i = 0; i < m_cursorCol; i++) {
+		char c = m_cachedDisplay.at(m_cursorRow)[i];
+		if (c == '\t') {
+			m_cursorX += glutBitmapWidth(m_font, ' ') * 4;
+		}
+		else {
+			m_cursorX += glutBitmapWidth(m_font, c);
+		}
+	}
+	
+}
+
+void TextWindow::save() {
+	std::string outFileName = "C:\\Temp\\type.txt";
+	std::ofstream outfile(outFileName);
+	if (!outfile.is_open()) {
+		outfile.close();
+		throw InvalidFileException(outFileName);
+	}
+	outfile << getText();
+	outfile.close();
+>>>>>>> Stashed changes
 }
