@@ -2,7 +2,7 @@
 #include <GL/freeglut.h>
 #include <vector>
 #include <string>
-
+#include <fstream>
 class TextWindow
 {
 
@@ -10,7 +10,7 @@ public:
 	TextWindow() = default;
 	GLubyte FONT_COLOR_TEXT[3]{204, 204, 204};
 	//Construct a TextWindow with a width and height
-	TextWindow(int w, int h);
+	TextWindow(int w, int h, int padW = 0, int padH = 0);
 
 	//Render the TextWindow
 	void render();
@@ -20,6 +20,9 @@ public:
 
 	//Tell the TextWindow that a key was pressed
 	void keyboardCallback(int key);
+
+	//Callback for some special keys, such as Function and Numpad keys
+	void specialFuncCallback(int key);
 
 	//Tell the TextWindow that the mouse state changed at pixel coordinates (x, y)
 	void mouseCallback(int btn, int state, int x, int y);
@@ -36,6 +39,8 @@ public:
 	//Change the font color to a new RGB (0-255) color
 	void setColor(GLubyte *col);
 
+	//Save the text
+	void save();
 	//Set the window's text to the provided string
 	void setText(const std::string &text);
 
@@ -43,20 +48,14 @@ public:
 	std::string getText();
 
 private:
-	//Source string that is edited by the user
-	std::string m_text;
-
 	//Precomputed collection of strings that is used for displaying to the user
-	std::vector<std::vector<std::string>> m_cachedDisplay;
-
-	//The displayed text is offset by (x, y). This accounts for borders, padding, etc.
-	GLint m_offsetTextPos[2];
+	std::vector<std::string> m_cachedDisplay;
 
 	//The size of the TextEditor window
 	GLint m_windowSize[2];
 
 	//The padding in pixels between top left corner and where text is displayed
-	GLint m_textPadding[2];
+	GLint m_textPadding[2]{0, 0};
 
 	//The font used to render the text
 	void *m_font = GLUT_BITMAP_9_BY_15;
@@ -67,8 +66,17 @@ private:
 	bool m_leftMouseDown, m_rightMouseDown;
 	int m_mousePos[2];
 
+	//Represents the location of the keyboard cursor in the cached display text
+	int m_cursorRow{0}, m_cursorSubRow{0}, m_cursorCol{0}, m_cursorX{0}, m_cursorY{0};
+	//index of cursor position in vector
+	//index for char pos (x val)
+	//x & y are pix val
+	int m_cursorOffset{0};
+
 	//Recalculates and updates internal properties that are used to display the text graphics
-	void recalculate();
+	//The optional newStr parameter will replace the old contents of the cached displayed text.
+	//If newStr is empty, the cached displayed text holds its old contents.
+	void recalculate(const std::string &newStr = "");
 
 private:
 	//TODO: All values in this field are for testing and should be replaced at some point
