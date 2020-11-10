@@ -96,12 +96,52 @@ void mainMenuHandler(int choice) {
 		break;
 	}
 }
+void themeMenuHander(int choice) {
+	//colorChoice = choice;
+	if (choice == 1)//light
+	{
+		GLubyte textColor[]{ 255,0,0 };
+		glClearColor(1.0, 1.0, 1.0, 0);  // specify a background clor: white
+		text_window.setColor(textColor);
+	}
+	else if (choice == 2)//dark
+	{
+		GLubyte textColor[]{ 0,255,0 };
+		glClearColor(0.0, 0.0, 0.0, 0);  // specify a background clor: black
+		text_window.setColor(textColor);
+	}
+	else if (choice == 3)//blue
+	{
+		GLubyte textColor[]{ 153,50,204 };
+		glClearColor(0.0, 0.0, 1, 0);  // specify a background clor: blue
+		text_window.setColor(textColor);
+	}
+
+	myDisplayCallback();
+}
 void fontMenuHandler(int choice) {
 	fontChoise = choice;
 	myDisplayCallback();
 }
 void colorMenuHandler(int choice) {
-	colorChoice = choice;
+	if (choice == 1)//default
+	{
+		GLubyte textColor[]{ 204,204,204 };
+		text_window.setColor(textColor);
+	}
+	else if (choice == 2)//red
+	{
+		GLubyte textColor[]{ 255,0,0 };
+		text_window.setColor(textColor);
+	}
+	else if (choice == 3)//blue
+	{
+		GLubyte textColor[]{ 0,0,255 };
+		text_window.setColor(textColor);
+	}
+
+
+
 	myDisplayCallback();
 }
 void helpMenuHandler(int choice) {
@@ -157,14 +197,18 @@ void myInit() {
 }
 //***********************************************************************************
 void menuInit() {
+	int themeSubMenu = glutCreateMenu(themeMenuHander);
+	glutAddMenuEntry("Light", 1);
+	glutAddMenuEntry("Dark", 2);
+	glutAddMenuEntry("Blue", 3);
 	int fontSubMenu = glutCreateMenu(fontMenuHandler);
 	glutAddMenuEntry("Default", 0);
 	glutAddMenuEntry("Times Roman", 1);
 	glutAddMenuEntry("Helvetica", 2);
 	int colorSubMenu = glutCreateMenu(colorMenuHandler);
-	glutAddMenuEntry("Default", 0);
-	glutAddMenuEntry("red", 1);
-	glutAddMenuEntry("blue", 2);
+	glutAddMenuEntry("Default", 1);
+	glutAddMenuEntry("red", 2);
+	glutAddMenuEntry("blue", 3);
 	int helpSubMenu = glutCreateMenu(helpMenuHandler);
 	glutAddMenuEntry("Show Help Window", 1);
 	glutAddMenuEntry("Hide Help Window", 0);
@@ -172,6 +216,7 @@ void menuInit() {
 	glutAddMenuEntry("Yes", 1);
 	glutAddMenuEntry("No", 0);
 	glutCreateMenu(mainMenuHandler);
+	glutAddSubMenu("Change Theme", themeSubMenu);
 	glutAddSubMenu("Change Font", fontSubMenu);
 	glutAddSubMenu("Change Color", colorSubMenu);
 	glutAddSubMenu("Help", helpSubMenu);

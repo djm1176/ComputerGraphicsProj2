@@ -21,7 +21,7 @@ void TextWindow::render() {
 		glColor3ubv(FONT_COLOR_DIM);
 		glutBitmapString(m_font, (unsigned char*)std::to_string(i + 1).c_str());
 
-		glColor3ubv(FONT_COLOR_TEXT);
+		glColor3ubv(m_fontColor);
 		glRasterPos2i(m_textPadding[0], i * glutBitmapHeight(m_font) + m_textPadding[1]);
 
 		for (int c = 0; c < m_cachedDisplay.at(i).length(); c++) {
@@ -103,7 +103,7 @@ void TextWindow::keyboardCallback(int key) {
 		//_targetStr.insert(m_cursorCol, 1, (char)key);
 		m_cursorCol++;
 	}
-
+	
 	recalculate();
 	render();
 	glFlush();
