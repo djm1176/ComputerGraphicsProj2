@@ -8,7 +8,7 @@ class TextWindow {
 
 public:
 	TextWindow() = default;
-	GLubyte FONT_COLOR_TEXT[3]{204, 204, 204};
+	GLubyte FONT_COLOR_TEXT[3]{ 204, 204, 204 };
 	//Construct a TextWindow with a width and height
 	TextWindow(int w, int h, int padW = 0, int padH = 0);
 
@@ -31,25 +31,23 @@ public:
 	void motionCallback(int x, int y);
 
 	//Change the font displayed to a new GL font
-	void setFont(void *font);
+	void setFont(void* font);
 
 	//Change the padding of the text on all sides by (w, h)
 	void setPadding(int w, int h);
 
 	//Change the font color to a new RGB (0-255) color
-	void setColor(GLubyte *col);
+	void setColor(GLubyte* col);
 
-	//Save the text
-	void save();
 	//Set the window's text to the provided string
-	void setText(const std::string &text);
+	void setText(const std::string& text);
 
 	//Returns the text within the text editor
 	std::string getText();
 
 	//Save the text
 	void save();
-  
+
 private:
 	//Precomputed collection of strings that is used for displaying to the user
 	std::vector<std::string> m_cachedDisplay;
@@ -57,42 +55,28 @@ private:
 	//The size of the TextEditor window
 	GLint m_windowSize[2];
 
-	//The padding in pixels between top left corner and where text is displayed
-  
+	//The padding in pixels between top left corner and where text is displayed  
 	GLint m_textPadding[2]{ 0, 0 };
 
-
 	//The font used to render the text
-	void *m_font = GLUT_BITMAP_9_BY_15;
+	void* m_font = GLUT_BITMAP_9_BY_15;
 
 	//The font color used to render the text
 	GLubyte m_fontColor[3];
 
 	bool m_leftMouseDown, m_rightMouseDown;
-	int m_mousePos[2];	
+	int m_mousePos[2];
 
 	//Represents the location of the keyboard cursor in the cached display text
-	int m_cursorRow{ 0 }, m_cursorSubRow{ 0 }, m_cursorCol{ 0 }, m_cursorX{ 0 }, m_cursorY{ 0 };
-	//index of cursor position in vector
-	//index for char pos (x val)
-	//x & y are pix val
-	int m_cursorOffset{ 0 };
-
-	//Represents the location of the keyboard cursor in the cached display text
-	int m_cursorRow{0}, m_cursorSubRow{0}, m_cursorCol{0}, m_cursorX{0}, m_cursorY{0};
-	//index of cursor position in vector
-	//index for char pos (x val)
-	//x & y are pix val
-	int m_cursorOffset{0};
+	int m_cursorRow{ 0 }, m_cursorCol{ 0 }, m_cursorX{ 0 }, m_cursorY{ 0 };
 
 	//Recalculates and updates internal properties that are used to display the text graphics
 	//The optional newStr parameter will replace the old contents of the cached displayed text.
 	//If newStr is empty, the cached displayed text holds its old contents.
-
 	void recalculate(const std::string& newStr = "");
 
 private:
 	//TODO: All values in this field are for testing and should be replaced at some point
 
-	GLubyte FONT_COLOR_DIM[3]{190, 190, 190};
+	GLubyte FONT_COLOR_DIM[3]{ 190, 190, 190 };
 };
