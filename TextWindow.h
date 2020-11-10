@@ -2,6 +2,7 @@
 #include <GL/freeglut.h>
 #include <vector>
 #include <string>
+#include <fstream>
 
 class TextWindow {
 
@@ -43,6 +44,9 @@ public:
 
 	//Returns the text within the text editor
 	std::string getText();
+
+	//Save the text
+	void save();
 
 private:
 	//Precomputed collection of strings that is used for displaying to the user

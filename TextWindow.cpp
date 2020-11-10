@@ -1,4 +1,5 @@
 #include "TextWindow.h"
+#include "InvalidFileException.h"
 #include <iostream>
 #include <sstream>
 
@@ -86,6 +87,9 @@ void TextWindow::keyboardCallback(int key) {
 	else if (key < 32) {
 		//TODO: this if block is for debugging, remove this block!
 		_targetStr.insert(m_cursorCol, "<" + std::to_string(key) + ">");
+	}
+	else if (key == 19) {
+		save();
 	}
 	else {
 		_targetStr.insert(_targetStr.begin() + m_cursorCol, (char)key);
@@ -290,4 +294,15 @@ void TextWindow::recalculate(const std::string &newStr) {
 		m_cursorX += glutBitmapWidth(m_font, m_cachedDisplay.at(m_cursorRow)[i]);
 	}
 	
+}
+
+void TextWindow::save() {
+	std::string outFileName = "C:\\Temp\\type.txt";
+	std::ofstream outfile(outFileName);
+	if (!outfile.is_open()) {
+		outfile.close();
+		throw InvalidFileException(outFileName);
+	}
+	outfile << getText();
+	outfile.close();
 }

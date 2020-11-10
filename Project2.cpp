@@ -32,8 +32,6 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <fstream>
-#include <stdexcept>
 
 #include "TextWindow.h"
 
@@ -51,7 +49,6 @@ void helpDisplayCallback();
 void helpKeyboardCallback(unsigned char, int, int);
 void drawHelpText(std::string text, int length, int x, int y);
 void drawHelp();
-void save();
 
 void recalculateDisplayString(int, int);
 
@@ -64,14 +61,6 @@ struct MousePosition {
 		y_coord{ y_coord }
 	{
 		// Intentionally empty due to using MIL
-	}
-};
-
-class InvalidFileException : public std::runtime_error {
-public:
-	explicit InvalidFileException(const std::string& message = "")
-		: std::runtime_error("Invalid file " + message + " either does not exist or could not be opened.") {
-		// Empty due to using MIL
 	}
 };
 
@@ -98,7 +87,7 @@ int helpWindow;
 void mainMenuHandler(int choice) {
 	switch (choice) {
 	case 0:
-		save();
+		text_window.save();
 		break;
 	case 1:
 		glutDestroyWindow(helpWindow);
@@ -249,7 +238,6 @@ void reshapeCallback(int w, int h) {
 //***********************************************************************************
 void draw() {
 	text_window.render();
-
 }
 
 //***********************************************************************************
@@ -282,15 +270,4 @@ void drawHelpText(std::string text, int length, int x, int y) {
 	{
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, (int)c);
 	}
-}
-
-void save() {
-	std::string outFileName = "C:\\Temp\\type.txt";
-	std::ofstream outfile(outFileName);
-	if (!outfile.is_open()) {
-		outfile.close();
-		throw InvalidFileException(outFileName);
-	}
-	outfile << text_window.getText();
-	outfile.close();
 }
