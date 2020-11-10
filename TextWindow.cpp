@@ -303,6 +303,7 @@ void TextWindow::recalculate(const std::string &newStr) {
 	
 }
 
+// Save the file to Temp
 void TextWindow::save() {
 	std::string outFileName = "C:\\Temp\\type.txt";
 	std::ofstream outfile(outFileName);
