@@ -53,6 +53,7 @@ void TextWindow::resize(GLint w, GLint h) {
 void TextWindow::keyboardCallback(int key) {
 	
 	std::string& _targetStr = m_cachedDisplay.at(m_cursorRow);
+	int mod = glutGetModifiers();
 	if (key == 8) {
 		//Backspace -- m_cursorRow cannot be < 1 (We cannot backspace at top left)
 		if (m_cursorCol == 0 && m_cursorRow > 0) {
@@ -84,12 +85,18 @@ void TextWindow::keyboardCallback(int key) {
 		_targetStr.insert(m_cursorCol, "\t");
 		m_cursorCol++;
 	}
+	else if (key == 's' && mod == GLUT_ACTIVE_ALT) {
+		try {
+			save();
+		}
+		catch (const InvalidFileException& err) {
+			// TODO figure out better file handling
+			std::cout << err.what() << std::endl;
+		}
+	}
 	else if (key < 32) {
 		//TODO: this if block is for debugging, remove this block!
 		_targetStr.insert(m_cursorCol, "<" + std::to_string(key) + ">");
-	}
-	else if (key == 19) {
-		save();
 	}
 	else {
 		_targetStr.insert(_targetStr.begin() + m_cursorCol, (char)key);
