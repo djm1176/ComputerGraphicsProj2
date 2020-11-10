@@ -1,5 +1,6 @@
 #pragma once
 #include <stdexcept>
+
 class InvalidFileException : public std::runtime_error {
 public:
 	explicit InvalidFileException(const std::string& message = "")
@@ -7,3 +8,4 @@ public:
 		// Empty due to using MIL
 	}
 };
+

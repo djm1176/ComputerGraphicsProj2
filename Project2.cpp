@@ -27,11 +27,13 @@
 		2.		Press Ctrl+F7 to COMPILE
 		3.		Press Ctrl+F5 to EXECUTE
 ==================================================================================================*/
-#include <GL/freeglut.h>  // include GLUT library
+#include <GL/freeglut.h> // include GLUT library
 
 #include <string>
 #include <iostream>
 #include <vector>
+
+#include "TextWindow.h"
 
 #include "TextWindow.h"
 
@@ -53,30 +55,45 @@ void drawHelp();
 void recalculateDisplayString(int, int);
 
 //********* Types
-struct MousePosition {
+struct MousePosition
+{
 	float x_coord;
 	float y_coord;
 
-	explicit MousePosition(float x_coord, float y_coord) : x_coord{ x_coord },
-		y_coord{ y_coord }
+	explicit MousePosition(float x_coord, float y_coord) : x_coord{x_coord},
+														   y_coord{y_coord}
 	{
 		// Intentionally empty due to using MIL
 	}
 };
 
+
+class InvalidFileException : public std::runtime_error
+{
+public:
+	explicit InvalidFileException(const std::string &message = "")
+		: std::runtime_error("Invalid file " + message + " either does not exist or could not be opened.")
+	{
+		// Empty due to using MIL
+	}
+};
+
+
 //********* Globals
 
 TextWindow text_window;
+
 
 const GLint WINDOW_SIZE[]{ 800, 600 };
 const GLint HELP_SIZE[]{ 700, 300 };
 const GLint ORIGIN_OFFSET[]{ 32, 24 };
 
+
 MousePosition mouse_position = MousePosition(0.0, 70.0);
 int cursor_position = 0;
 int fontChoise = 0;
 int colorChoice = 0;
-void* GLOBAL_FONT[] = { GLUT_BITMAP_9_BY_15,GLUT_BITMAP_TIMES_ROMAN_10,GLUT_BITMAP_HELVETICA_10 };
+void *GLOBAL_FONT[] = {GLUT_BITMAP_9_BY_15, GLUT_BITMAP_TIMES_ROMAN_10, GLUT_BITMAP_HELVETICA_10};
 bool leftButton = false;
 bool rightButton = false;
 
@@ -84,6 +101,7 @@ int mainWindow;
 int helpWindow;
 
 //********* Subroutines
+
 void mainMenuHandler(int choice) {
 	switch (choice) {
 	case 0:
@@ -95,6 +113,7 @@ void mainMenuHandler(int choice) {
 	default:
 		break;
 	}
+
 }
 void themeMenuHander(int choice) {
 	//colorChoice = choice;
@@ -118,11 +137,15 @@ void themeMenuHander(int choice) {
 	}
 
 	myDisplayCallback();
+
 }
-void fontMenuHandler(int choice) {
+void fontMenuHandler(int choice)
+{
 	fontChoise = choice;
+	text_window.setFont(GLOBAL_FONT[choice]);
 	myDisplayCallback();
 }
+
 void colorMenuHandler(int choice) {
 	if (choice == 1)//default
 	{
@@ -141,33 +164,35 @@ void colorMenuHandler(int choice) {
 	}
 
 
-
 	myDisplayCallback();
 }
-void helpMenuHandler(int choice) {
+void helpMenuHandler(int choice)
+{
 	glutSetWindow(helpWindow);
-	if (choice == 1) {
+	if (choice == 1)
+	{
 		glutShowWindow();
 	}
-	else if (choice == 0) {
+	else if (choice == 0)
+	{
 		glutHideWindow();
 	}
-	
 }
+
 
 int main(int argc, char** argv) {
 
-	glutInit(&argc, argv);  // initialization
+	glutInit(&argc, argv); // initialization
 
-	glutInitWindowSize(WINDOW_SIZE[0], WINDOW_SIZE[1]);                // specify a window size
-	glutInitWindowPosition(0, 0);              // specify a window position
-	mainWindow = glutCreateWindow("GLUT Text Editor");  // create a titled window
+	glutInitWindowSize(WINDOW_SIZE[0], WINDOW_SIZE[1]); // specify a window size
+	glutInitWindowPosition(0, 0);						// specify a window position
+	mainWindow = glutCreateWindow("GLUT Text Editor");	// create a titled window
 
-	myInit();  // specify some settings
+	myInit(); // specify some settings
 
 	menuInit();
 
-	glutDisplayFunc(myDisplayCallback);  // register a callback
+	glutDisplayFunc(myDisplayCallback); // register a callback
 	glutKeyboardFunc(keyboardCallback);
 	glutSpecialFunc(specialFuncCallback);
 	glutMouseFunc(mouseCallback);
@@ -182,9 +207,9 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(helpDisplayCallback);
 	glutKeyboardFunc(helpKeyboardCallback);
 
-	glutMainLoop();  // get into an infinite loop
+	glutMainLoop(); // get into an infinite loop
 
-	return 1;  // something wrong happened
+	return 1; // something wrong happened
 }
 
 //***********************************************************************************
@@ -212,9 +237,6 @@ void menuInit() {
 	int helpSubMenu = glutCreateMenu(helpMenuHandler);
 	glutAddMenuEntry("Show Help Window", 1);
 	glutAddMenuEntry("Hide Help Window", 0);
-	int saveSubMenu = glutCreateMenu(colorMenuHandler);
-	glutAddMenuEntry("Yes", 1);
-	glutAddMenuEntry("No", 0);
 	glutCreateMenu(mainMenuHandler);
 	glutAddSubMenu("Change Theme", themeSubMenu);
 	glutAddSubMenu("Change Font", fontSubMenu);
@@ -226,20 +248,22 @@ void menuInit() {
 	glutCreateMenu(mainMenuHandler);
 }
 //***********************************************************************************
-void myDisplayCallback() {
-	glClear(GL_COLOR_BUFFER_BIT);  // draw the background
+void myDisplayCallback()
+{
+	glClear(GL_COLOR_BUFFER_BIT); // draw the background
 
 	draw();
 
-	glFlush();  // flush out the buffer contents
+	glFlush(); // flush out the buffer contents
 }
 //***********************************************************************************
-void helpDisplayCallback() {
-	glClear(GL_COLOR_BUFFER_BIT);  // draw the background
+void helpDisplayCallback()
+{
+	glClear(GL_COLOR_BUFFER_BIT); // draw the background
 
 	drawHelp();
 
-	glFlush();  // flush out the buffer contents
+	glFlush(); // flush out the buffer contents
 	glutSwapBuffers();
 }
 
@@ -250,12 +274,13 @@ void keyboardCallback(unsigned char key, int x, int y) {
 
 void specialFuncCallback(int key, int x, int y) {
 	text_window.specialFuncCallback(key);
-
 }
 
 //***********************************************************************************
-void helpKeyboardCallback(unsigned char key, int x, int y) {
-	switch (key) {
+void helpKeyboardCallback(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
 	case 81:
 	case 113:
 		glutHideWindow();
@@ -286,14 +311,15 @@ void draw() {
 }
 
 //***********************************************************************************
-void drawHelp() {
+void drawHelp()
+{
 
-	std::string helpItems[10] = { "Welcome to the GLUT Text Editor, Version 1.0, November 2020",
-	"To change properties about the text, right click the editor to view the menu",
-	"   Select 'Font' to change the font", "   Select 'Color' to change the text color",
-	"   Select 'Help' to return to this help window", "   Select 'Save' to save the text to a file",
-	"   Select 'Exit' to leave the program", "Keyboard Shortcuts:", "   CTRL + S to save the file",
-	"   CTRL + H for help" }; //
+	std::string helpItems[10] = {"Welcome to the GLUT Text Editor, Version 1.0, November 2020",
+								 "To change properties about the text, right click the editor to view the menu",
+								 "   Select 'Font' to change the font", "   Select 'Color' to change the text color",
+								 "   Select 'Help' to return to this help window", "   Select 'Save' to save the text to a file",
+								 "   Select 'Exit' to leave the program", "Keyboard Shortcuts:", "   CTRL + S to save the file",
+								 "   CTRL + H for help"}; //
 
 	std::string saveLoc = "The saved file is stored at C:\\Temp\\typed.txt";
 	std::string done = "Press Q to terminate the help screen and to return to the editor.";
@@ -305,10 +331,10 @@ void drawHelp() {
 
 	drawHelpText(saveLoc, 0, 10, 530);
 	drawHelpText(done, 0, 10, 575);
-
 }
 
-void drawHelpText(std::string text, int length, int x, int y) {
+void drawHelpText(std::string text, int length, int x, int y)
+{
 	glColor3f(0.8, 0.8, 0.8);
 	glRasterPos2i(x, y);
 	for (auto c : text)
@@ -316,3 +342,4 @@ void drawHelpText(std::string text, int length, int x, int y) {
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, (int)c);
 	}
 }
+

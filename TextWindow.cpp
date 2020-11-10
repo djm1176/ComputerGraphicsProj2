@@ -3,11 +3,14 @@
 #include <iostream>
 #include <sstream>
 
+
 TextWindow::TextWindow(int w, int h, int padW, int padH) {
+
 	m_textPadding[0] = padW;
 	m_textPadding[1] = padH;
 	resize(w, h);
 }
+
 
 void TextWindow::render() {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -19,6 +22,7 @@ void TextWindow::render() {
 		//Render line number on left-hand side.
 		glRasterPos2i(4, i * glutBitmapHeight(m_font) + m_textPadding[1]);
 		glColor3ubv(FONT_COLOR_DIM);
+
 		glutBitmapString(m_font, (unsigned char*)std::to_string(i + 1).c_str());
 
 		glColor3ubv(m_fontColor);
@@ -44,11 +48,13 @@ void TextWindow::render() {
 	glEnd();
 }
 
-void TextWindow::resize(GLint w, GLint h) {
+void TextWindow::resize(GLint w, GLint h)
+{
 	m_windowSize[0] = w;
 	m_windowSize[1] = h;
 	recalculate();
 }
+
 
 void TextWindow::keyboardCallback(int key) {
 	
@@ -74,12 +80,14 @@ void TextWindow::keyboardCallback(int key) {
 			m_cursorCol--;
 		}
 	}
+
 	else if (key == 13) {
 		//Newline
 		_targetStr.insert(m_cursorCol, "\n");
 		m_cursorRow++;
 		m_cursorCol = 0;
 	}
+
 	else if (key == 9) {
 		//Tab
 		_targetStr.insert(m_cursorCol, "\t");
@@ -103,11 +111,11 @@ void TextWindow::keyboardCallback(int key) {
 		//_targetStr.insert(m_cursorCol, 1, (char)key);
 		m_cursorCol++;
 	}
-	
 	recalculate();
 	render();
 	glFlush();
 }
+
 
 void TextWindow::specialFuncCallback(int key) {
 	switch (key) {
@@ -121,6 +129,7 @@ void TextWindow::specialFuncCallback(int key) {
 	{
 		m_cursorCol++;
 		int len = m_cachedDisplay.at(m_cursorRow).length();
+
 		if (m_cursorCol > len - 1) m_cursorCol = len - 1;
 		break;
 	}
@@ -166,6 +175,7 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 		m_rightMouseDown = (state == GLUT_KEY_DOWN);
 		break;
 	}
+
 	if (state == GLUT_KEY_UP) return;
 
 	m_mousePos[0] = x;
@@ -196,7 +206,6 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 		if (pixels >= x) {
 			pixels -= w;
 			break; //c now holds x index of cursor
-
 		}
 	}
 	std::cout << m_cachedDisplay.at(y)[c] << std::endl;
@@ -206,29 +215,32 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 	m_cursorY = y * glutBitmapHeight(m_font);
 	m_cursorRow = y + 1;
 	m_cursorCol = c;
-
 }
 
-void TextWindow::motionCallback(int x, int y) {
+void TextWindow::motionCallback(int x, int y)
+{
 
 	recalculate();
 }
 
-void TextWindow::setFont(void* font) {
+void TextWindow::setFont(void *font)
+{
 	m_font = font;
 	recalculate();
 }
 
-void TextWindow::setPadding(int w, int h) {
+void TextWindow::setPadding(int w, int h)
+{
 	m_textPadding[0] = w;
 	m_textPadding[1] = h;
 	recalculate();
 }
 
-void TextWindow::setColor(GLubyte* col) {
-	m_fontColor[0] = col[0]; //R
-	m_fontColor[1] = col[1]; //G
-	m_fontColor[2] = col[2]; //B
+void TextWindow::setColor(GLubyte *col)
+{
+	FONT_COLOR_TEXT[0] = col[0]; //R
+	FONT_COLOR_TEXT[1] = col[1]; //G
+	FONT_COLOR_TEXT[2] = col[2]; //B
 	recalculate();
 }
 
@@ -249,14 +261,12 @@ std::string TextWindow::getText() {
 
 	return returnString.str();
 }
-
 void TextWindow::recalculate(const std::string &newStr) {
 	//Recalculate the contents of the vector by copying its old (or optional new) value, and inserting new lines (word wrap)
 
 	//If the optional parameter is empty, use old text. If not empty, use passed parameter
 	std::string temp = (newStr == "" ? getText() : newStr);
 	m_cachedDisplay.clear();
-	
 	int pos{ 0 };
 
 	//Handle new lines
@@ -290,6 +300,8 @@ void TextWindow::recalculate(const std::string &newStr) {
 			m_cachedDisplay.insert(m_cachedDisplay.begin() + i + 1, m_cachedDisplay.at(i).substr(_split_pos + 1));
 			m_cachedDisplay.at(i) = m_cachedDisplay.at(i).substr(0, _split_pos);
 
+			m_cachedDisplay.insert(m_cachedDisplay.begin() + i + 1, m_cachedDisplay.at(i).substr(_split_pos + 1));
+			m_cachedDisplay.at(i) = m_cachedDisplay.at(i).substr(0, _split_pos);
 		}
 	}
 
