@@ -96,6 +96,16 @@ int helpWindow;
 
 //********* Subroutines
 void mainMenuHandler(int choice) {
+	switch (choice) {
+	case 0:
+		save();
+		break;
+	case 1:
+		glutDestroyWindow(helpWindow);
+		glutDestroyWindow(mainWindow);
+	default:
+		break;
+	}
 }
 void fontMenuHandler(int choice) {
 	fontChoise = choice;
@@ -115,12 +125,7 @@ void helpMenuHandler(int choice) {
 	}
 	
 }
-void saveMenuHandler(int choice) {
-	save();
-}
-void exitMenuHandler(int choice) {
-	exit(choice);
-}
+
 int main(int argc, char** argv) {
 
 	glutInit(&argc, argv);  // initialization
@@ -175,15 +180,14 @@ void menuInit() {
 	glutAddMenuEntry("Show Help Window", 1);
 	glutAddMenuEntry("Hide Help Window", 0);
 	int saveSubMenu = glutCreateMenu(colorMenuHandler);
-	int exitAppMenu = glutCreateMenu(exitMenuHandler);
 	glutAddMenuEntry("Yes", 1);
 	glutAddMenuEntry("No", 0);
 	glutCreateMenu(mainMenuHandler);
 	glutAddSubMenu("Change Font", fontSubMenu);
 	glutAddSubMenu("Change Color", colorSubMenu);
 	glutAddSubMenu("Help", helpSubMenu);
-	glutAddSubMenu("Save", saveSubMenu);
-	glutAddSubMenu("Exit", exitAppMenu);
+	glutAddMenuEntry("Save", 0);
+	glutAddMenuEntry("Exit", 1);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	glutCreateMenu(mainMenuHandler);
 }
@@ -208,7 +212,6 @@ void helpDisplayCallback() {
 //***********************************************************************************
 void keyboardCallback(unsigned char key, int x, int y) {
 	text_window.keyboardCallback(key);
-
 }
 
 void specialFuncCallback(int key, int x, int y) {
