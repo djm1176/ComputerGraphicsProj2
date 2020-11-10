@@ -2,6 +2,7 @@
 #include "InvalidFileException.h"
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 
 TextWindow::TextWindow(int w, int h, int padW, int padH) {
@@ -285,6 +286,13 @@ void TextWindow::recalculate(const std::string& newStr) {
 			//Backtrack from max chars in row until a whitespace
 			for (; _split_pos > 0 && !std::isspace(m_cachedDisplay.at(i).at(_split_pos)); _split_pos--);
 
+			//Is the mouse cursor connected to this section that's gonna get word wrapped?
+			if (m_cursorRow == i && m_cursorCol >= _split_pos) {
+				m_cursorRow++;
+				m_cursorCol -= _split_pos + 1;
+			}
+
+
 			m_cachedDisplay.insert(m_cachedDisplay.begin() + i + 1, m_cachedDisplay.at(i).substr(_split_pos + 1));
 			m_cachedDisplay.at(i) = m_cachedDisplay.at(i).substr(0, _split_pos);
 		}
@@ -307,7 +315,7 @@ void TextWindow::recalculate(const std::string& newStr) {
 }
 
 void TextWindow::save() {
-	std::string outFileName = "C:\\Temp\\type.txt";
+	std::string outFileName = "C:\\Temp\\typed.txt";
 	std::ofstream outfile(outFileName);
 	if (!outfile.is_open()) {
 		outfile.close();
