@@ -1,10 +1,16 @@
 #include "TextWindow.h"
+#include "InvalidFileException.h"
 #include <iostream>
 #include <sstream>
 
-TextWindow::TextWindow(int w, int h) {
+
+TextWindow::TextWindow(int w, int h, int padW, int padH) {
+
+	m_textPadding[0] = padW;
+	m_textPadding[1] = padH;
 	resize(w, h);
 }
+
 
 void TextWindow::render() {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -16,7 +22,7 @@ void TextWindow::render() {
 		//Render line number on left-hand side.
 		glRasterPos2i(4, i * glutBitmapHeight(m_font) + m_textPadding[1]);
 		glColor3ubv(FONT_COLOR_DIM);
-		glutBitmapString(m_font, (unsigned char*)std::to_string(i).c_str());
+		glutBitmapString(m_font, (unsigned char*)std::to_string(i + 1).c_str());
 
 		glColor3ubv(m_fontColor);
 		glRasterPos2i(m_textPadding[0], i * glutBitmapHeight(m_font) + m_textPadding[1]);
@@ -41,25 +47,28 @@ void TextWindow::render() {
 	glEnd();
 }
 
-void TextWindow::resize(GLint w, GLint h) {
+void TextWindow::resize(GLint w, GLint h)
+{
 	m_windowSize[0] = w;
 	m_windowSize[1] = h;
 	recalculate();
 }
 
+
 void TextWindow::keyboardCallback(int key) {
 	
 	std::string& _targetStr = m_cachedDisplay.at(m_cursorRow);
+	int mod = glutGetModifiers();
 	if (key == 8) {
 		if (m_cursorCol < 0) m_cursorCol = 0;
 		//Backspace -- m_cursorRow cannot be < 1 (We cannot backspace at top left)
 		if (m_cursorCol == 0 && m_cursorRow > 0 && m_cachedDisplay.size() > 0) {
 			//Cursor is at front of this row; remove the new line, and append this row to the above row
-<<<<<<< Updated upstream
+
 			m_cachedDisplay.at(m_cursorRow - 1) += _targetStr;
 			//Remove old line
 			m_cachedDisplay.erase(m_cachedDisplay.begin() + m_cursorRow);
-=======
+
 			m_cursorCol = m_cachedDisplay.at(m_cursorRow - 1).length(); //Put the cursor at the end of the row above
 			m_cachedDisplay.at(m_cursorRow - 1) += _targetStr;
 			//Remove old line
@@ -68,33 +77,49 @@ void TextWindow::keyboardCallback(int key) {
 		}
 		else if (m_cursorCol == 0 && m_cursorRow == 0) {
 			//do nothing
->>>>>>> Stashed changes
 		}
 		else {
 			//Cursor in middle of row somewhere...
 			_targetStr.erase(m_cursorCol - 1, 1);
+			m_cursorCol--;
 		}
 	}
+
 	else if (key == 13) {
 		//Newline
 		_targetStr.insert(m_cursorCol, "\n");
+		m_cursorRow++;
+		m_cursorCol = 0;
 	}
+
 	else if (key == 9) {
 		//Tab
 		_targetStr.insert(m_cursorCol, "\t");
+		m_cursorCol++;
+	}
+	else if (key == 's' && mod == GLUT_ACTIVE_ALT) {
+		try {
+			save();
+		}
+		catch (const InvalidFileException& err) {
+			// TODO figure out better file handling
+			std::cout << err.what() << std::endl;
+		}
 	}
 	else if (key < 32) {
 		//TODO: this if block is for debugging, remove this block!
 		_targetStr.insert(m_cursorCol, "<" + std::to_string(key) + ">");
 	}
 	else {
-		_targetStr.insert(m_cursorCol, 1, (char)key);
+		_targetStr.insert(_targetStr.begin() + m_cursorCol, (char)key);
+		//_targetStr.insert(m_cursorCol, 1, (char)key);
+		m_cursorCol++;
 	}
-
 	recalculate();
 	render();
 	glFlush();
 }
+
 
 void TextWindow::specialFuncCallback(int key) {
 	switch (key) {
@@ -166,6 +191,7 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 		m_rightMouseDown = (state == GLUT_KEY_DOWN);
 		break;
 	}
+
 	if (state == GLUT_KEY_UP) return;
 
 	m_mousePos[0] = x;
@@ -196,7 +222,6 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 		if (pixels >= x) {
 			pixels -= w;
 			break; //c now holds x index of cursor
-
 		}
 	}
 	std::cout << m_cachedDisplay.at(y)[c] << std::endl;
@@ -204,31 +229,34 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 	y--;
 	m_cursorX = pixels;
 	m_cursorY = y * glutBitmapHeight(m_font);
-	m_cursorRow = y;
+	m_cursorRow = y + 1;
 	m_cursorCol = c;
-
 }
 
-void TextWindow::motionCallback(int x, int y) {
+void TextWindow::motionCallback(int x, int y)
+{
 
 	recalculate();
 }
 
-void TextWindow::setFont(void* font) {
+void TextWindow::setFont(void *font)
+{
 	m_font = font;
 	recalculate();
 }
 
-void TextWindow::setPadding(int w, int h) {
+void TextWindow::setPadding(int w, int h)
+{
 	m_textPadding[0] = w;
 	m_textPadding[1] = h;
 	recalculate();
 }
 
-void TextWindow::setColor(GLubyte* col) {
-	m_fontColor[0] = col[0]; //R
-	m_fontColor[1] = col[1]; //G
-	m_fontColor[2] = col[2]; //B
+void TextWindow::setColor(GLubyte *col)
+{
+	FONT_COLOR_TEXT[0] = col[0]; //R
+	FONT_COLOR_TEXT[1] = col[1]; //G
+	FONT_COLOR_TEXT[2] = col[2]; //B
 	recalculate();
 }
 
@@ -243,19 +271,18 @@ std::string TextWindow::getText() {
 	std::stringstream returnString;
 	for (unsigned i = 0; i < m_cachedDisplay.size(); i++)
 	{
-		returnString << m_cachedDisplay.at(i) << "\n";
+		//Don't add a new line on the last line; the user must do this manually
+		returnString << m_cachedDisplay.at(i) << (i == m_cachedDisplay.size() - 1 ?  "" : "\n");
 	}
 
 	return returnString.str();
 }
-
 void TextWindow::recalculate(const std::string &newStr) {
 	//Recalculate the contents of the vector by copying its old (or optional new) value, and inserting new lines (word wrap)
 
 	//If the optional parameter is empty, use old text. If not empty, use passed parameter
 	std::string temp = (newStr == "" ? getText() : newStr);
 	m_cachedDisplay.clear();
-	
 	int pos{ 0 };
 
 	//Handle new lines
@@ -289,11 +316,12 @@ void TextWindow::recalculate(const std::string &newStr) {
 			m_cachedDisplay.insert(m_cachedDisplay.begin() + i + 1, m_cachedDisplay.at(i).substr(_split_pos + 1));
 			m_cachedDisplay.at(i) = m_cachedDisplay.at(i).substr(0, _split_pos);
 
+			m_cachedDisplay.insert(m_cachedDisplay.begin() + i + 1, m_cachedDisplay.at(i).substr(_split_pos + 1));
+			m_cachedDisplay.at(i) = m_cachedDisplay.at(i).substr(0, _split_pos);
 		}
 	}
 
-<<<<<<< Updated upstream
-=======
+
 	//Update the keyboard cursor's pixel coordinates
 	m_cursorY = (m_cursorRow - 1) * glutBitmapHeight(m_font);
 	//We assume that the cachedDisplay ALWAYS has at least 1 element and cursorCol is less than the length of current cursorRow
@@ -319,5 +347,4 @@ void TextWindow::save() {
 	}
 	outfile << getText();
 	outfile.close();
->>>>>>> Stashed changes
 }

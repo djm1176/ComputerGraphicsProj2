@@ -26,5 +26,8 @@
     <ClInclude Include="TextWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="InvalidFileException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
