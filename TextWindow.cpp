@@ -1,4 +1,3 @@
-#include <GL/freeglut.h>
 #include "TextWindow.h"
 #include "InvalidFileException.h"
 #include <iostream>
