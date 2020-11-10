@@ -32,8 +32,8 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <fstream>
-#include <stdexcept>
+
+#include "TextWindow.h"
 
 #include "TextWindow.h"
 
@@ -51,7 +51,6 @@ void helpDisplayCallback();
 void helpKeyboardCallback(unsigned char, int, int);
 void drawHelpText(std::string text, int length, int x, int y);
 void drawHelp();
-void save();
 
 void recalculateDisplayString(int, int);
 
@@ -68,6 +67,7 @@ struct MousePosition
 	}
 };
 
+
 class InvalidFileException : public std::runtime_error
 {
 public:
@@ -78,13 +78,16 @@ public:
 	}
 };
 
+
 //********* Globals
 
 TextWindow text_window;
 
-const GLint WINDOW_SIZE[]{800, 600};
-const GLint HELP_SIZE[]{700, 300};
-const GLint ORIGIN_OFFSET[]{32, 24};
+
+const GLint WINDOW_SIZE[]{ 800, 600 };
+const GLint HELP_SIZE[]{ 700, 300 };
+const GLint ORIGIN_OFFSET[]{ 32, 24 };
+
 
 MousePosition mouse_position = MousePosition(0.0, 70.0);
 int cursor_position = 0;
@@ -98,12 +101,11 @@ int mainWindow;
 int helpWindow;
 
 //********* Subroutines
-void mainMenuHandler(int choice)
-{
-	switch (choice)
-	{
+
+void mainMenuHandler(int choice) {
+	switch (choice) {
 	case 0:
-		save();
+		text_window.save();
 		break;
 	case 1:
 		glutDestroyWindow(helpWindow);
@@ -111,6 +113,31 @@ void mainMenuHandler(int choice)
 	default:
 		break;
 	}
+
+}
+void themeMenuHander(int choice) {
+	//colorChoice = choice;
+	if (choice == 1)//light
+	{
+		GLubyte textColor[]{ 255,0,0 };
+		glClearColor(1.0, 1.0, 1.0, 0);  // specify a background clor: white
+		text_window.setColor(textColor);
+	}
+	else if (choice == 2)//dark
+	{
+		GLubyte textColor[]{ 0,255,0 };
+		glClearColor(0.0, 0.0, 0.0, 0);  // specify a background clor: black
+		text_window.setColor(textColor);
+	}
+	else if (choice == 3)//blue
+	{
+		GLubyte textColor[]{ 153,50,204 };
+		glClearColor(0.0, 0.0, 1, 0);  // specify a background clor: blue
+		text_window.setColor(textColor);
+	}
+
+	myDisplayCallback();
+
 }
 void fontMenuHandler(int choice)
 {
@@ -118,24 +145,25 @@ void fontMenuHandler(int choice)
 	text_window.setFont(GLOBAL_FONT[choice]);
 	myDisplayCallback();
 }
-void colorMenuHandler(int choice)
-{
 
-	if (choice == 0)
+void colorMenuHandler(int choice) {
+	if (choice == 1)//default
 	{
-		GLubyte col[] = {GLubyte(204), GLubyte(204), GLubyte(204)};
-		text_window.setColor(col);
+		GLubyte textColor[]{ 204,204,204 };
+		text_window.setColor(textColor);
 	}
-	else if (choice == 1)
+	else if (choice == 2)//red
 	{
-		GLubyte col[] = {GLubyte(255), GLubyte(0), GLubyte(0)};
-		text_window.setColor(col);
+		GLubyte textColor[]{ 255,0,0 };
+		text_window.setColor(textColor);
 	}
-	else if (choice == 2)
+	else if (choice == 3)//blue
 	{
-		GLubyte col[] = {GLubyte(0), GLubyte(0), GLubyte(255)};
-		text_window.setColor(col);
+		GLubyte textColor[]{ 0,0,255 };
+		text_window.setColor(textColor);
 	}
+
+
 	myDisplayCallback();
 }
 void helpMenuHandler(int choice)
@@ -150,8 +178,9 @@ void helpMenuHandler(int choice)
 		glutHideWindow();
 	}
 }
-int main(int argc, char **argv)
-{
+
+
+int main(int argc, char** argv) {
 
 	glutInit(&argc, argv); // initialization
 
@@ -184,28 +213,32 @@ int main(int argc, char **argv)
 }
 
 //***********************************************************************************
-void myInit()
-{
-	glClearColor(0.1, 0.12, 0.12, 0);				  // specify a background clor: white
-	gluOrtho2D(0, WINDOW_SIZE[0], WINDOW_SIZE[1], 0); // specify a viewing area
+void myInit() {
+	glClearColor(0.1, 0.12, 0.12, 0);  // specify a background clor: white
+	gluOrtho2D(0, WINDOW_SIZE[0], WINDOW_SIZE[1], 0);  // specify a viewing area
 
 	text_window = TextWindow(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 24, 24);
+
 }
 //***********************************************************************************
-void menuInit()
-{
+void menuInit() {
+	int themeSubMenu = glutCreateMenu(themeMenuHander);
+	glutAddMenuEntry("Light", 1);
+	glutAddMenuEntry("Dark", 2);
+	glutAddMenuEntry("Blue", 3);
 	int fontSubMenu = glutCreateMenu(fontMenuHandler);
 	glutAddMenuEntry("Default", 0);
 	glutAddMenuEntry("Times Roman", 1);
 	glutAddMenuEntry("Helvetica", 2);
 	int colorSubMenu = glutCreateMenu(colorMenuHandler);
-	glutAddMenuEntry("Default", 0);
-	glutAddMenuEntry("red", 1);
-	glutAddMenuEntry("blue", 2);
+	glutAddMenuEntry("Default", 1);
+	glutAddMenuEntry("red", 2);
+	glutAddMenuEntry("blue", 3);
 	int helpSubMenu = glutCreateMenu(helpMenuHandler);
 	glutAddMenuEntry("Show Help Window", 1);
 	glutAddMenuEntry("Hide Help Window", 0);
 	glutCreateMenu(mainMenuHandler);
+	glutAddSubMenu("Change Theme", themeSubMenu);
 	glutAddSubMenu("Change Font", fontSubMenu);
 	glutAddSubMenu("Change Color", colorSubMenu);
 	glutAddSubMenu("Help", helpSubMenu);
@@ -235,13 +268,11 @@ void helpDisplayCallback()
 }
 
 //***********************************************************************************
-void keyboardCallback(unsigned char key, int x, int y)
-{
+void keyboardCallback(unsigned char key, int x, int y) {
 	text_window.keyboardCallback(key);
 }
 
-void specialFuncCallback(int key, int x, int y)
-{
+void specialFuncCallback(int key, int x, int y) {
 	text_window.specialFuncCallback(key);
 }
 
@@ -258,25 +289,24 @@ void helpKeyboardCallback(unsigned char key, int x, int y)
 }
 
 //***********************************************************************************
-void mouseCallback(int button, int state, int x, int y)
-{
+void mouseCallback(int button, int state, int x, int y) {
 	text_window.mouseCallback(button, state, x, y);
+
 }
 
 //***********************************************************************************
-void motionCallback(int x, int y)
-{
+void motionCallback(int x, int y) {
 	text_window.motionCallback(x, y);
+
 }
 
-void reshapeCallback(int w, int h)
-{
+void reshapeCallback(int w, int h) {
 	text_window.resize(w, h);
+
 }
 
 //***********************************************************************************
-void draw()
-{
+void draw() {
 	text_window.render();
 }
 
@@ -313,15 +343,3 @@ void drawHelpText(std::string text, int length, int x, int y)
 	}
 }
 
-void save()
-{
-	std::string outFileName = "C:\\Temp\\type.txt";
-	std::ofstream outfile(outFileName);
-	if (!outfile.is_open())
-	{
-		outfile.close();
-		throw InvalidFileException(outFileName);
-	}
-	outfile << text_window.getText();
-	outfile.close();
-}
