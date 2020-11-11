@@ -1,24 +1,42 @@
 /*==================================================================================================
- #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
- #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
- #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
- BEFORE SUBMITTING:
-	Fix, remove or finish all TODOs
-	Review comments and remove any poor language/unnecessary comments
- #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
- #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
- #$(*&$(*&$#(*&%(*#&%(*&$(*&#$(*&#$(*&#$(*&#$(*&#%(@(#*$&$%^&@$^(%#*^$)*%(*&$#&@^*$(*^#*$*&@#&@^#&%^$*$%#*$
  COURSE:				  CSC 525/625
  ASSIGNMENT:			  Project 2
  PROGRAMMER:			  Eric McCullough
+							* Contributions
+								* File saving
+								* Menu items for saving and exiting
+							* Contribution %
+								* 14.3%
 						  Alex Webber
+							* Contributions
+								* Help window
+							* Contribution %
+								* 14.3%
 						  Tyler Cardwell
+							* Contributions
+								* Menu items for themes
+							* Contribution %
+								* 14.3%
 						  Daniel Moore
+							* Contributions
+								* Text Editor functionality
+								* Text editor rendering logic
+							* Contribution %
+								* 14.3%
 						  John Meents
+							* Contributions
+								* Text editor functionality
+								* Text editor rendering logic
+							* Contribution %
+								* 14.3%
 						  Ben Jinkerson
 						  Dallas Bramel
- LAST MODIFIED DATE:	  10/23/2020
- DESCRIPTION:			  Text editor written in GLUT
+							* Contributions
+								* Menu items for fonts
+							* Contribution %
+								* 14.3%
+ LAST MODIFIED DATE:	  11/10/2020
+ DESCRIPTION:			  Text editor written with GLUT
  NOTE:					  N/A
  FILES:					  Project2.cpp, (labProj.sln, ...)
  IDE/COMPILER:			  Microsoft Visual Studio 2019
