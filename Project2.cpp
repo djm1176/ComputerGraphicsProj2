@@ -38,7 +38,8 @@
 #include "TextWindow.h"
 
 //********* Prototypes
-void myInit();
+void mainWindowInit();
+void helpWindowInit();
 void myDisplayCallback();
 void menuInit();
 void keyboardCallback(unsigned char, int, int);
@@ -173,9 +174,7 @@ int main(int argc, char** argv) {
 	glutInitWindowSize(WINDOW_SIZE[0], WINDOW_SIZE[1]); // specify a window size
 	glutInitWindowPosition(0, 0);						// specify a window position
 	mainWindow = glutCreateWindow("GLUT Text Editor");	// create a titled window
-
-	myInit(); // specify some settings
-
+	mainWindowInit(); // specify some settings
 	menuInit();
 
 	glutDisplayFunc(myDisplayCallback); // register a callback
@@ -188,24 +187,30 @@ int main(int argc, char** argv) {
 	glutInitWindowSize(HELP_SIZE[0], HELP_SIZE[1]);
 	glutInitWindowPosition(825, 0);
 	helpWindow = glutCreateWindow("GLUT Text Editor Help");
-	myInit();
+	helpWindowInit(); // specify some settings
 
 	glutDisplayFunc(helpDisplayCallback);
 	glutKeyboardFunc(helpKeyboardCallback);
-
+	
 	glutMainLoop(); // get into an infinite loop
 
 	return 1; // something wrong happened
 }
 
 //***********************************************************************************
-void myInit() {
+void mainWindowInit() {
 	glClearColor(0.1, 0.12, 0.12, 0);  // specify a background clor: white
 	gluOrtho2D(0, WINDOW_SIZE[0], WINDOW_SIZE[1], 0);  // specify a viewing area
 
 	text_window = TextWindow(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 24, 24);
 
 }
+
+void helpWindowInit() {
+	glClearColor(0.1, 0.12, 0.12, 0);  // specify a background clor: white
+	gluOrtho2D(0, WINDOW_SIZE[0], WINDOW_SIZE[1], 0);  // specify a viewing area
+}
+
 //***********************************************************************************
 void menuInit() {
 	int themeSubMenu = glutCreateMenu(themeMenuHander);

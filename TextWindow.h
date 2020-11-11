@@ -42,6 +42,9 @@ public:
 	//Set the window's text to the provided string
 	void setText(const std::string& text);
 
+	//Set the window's text directly, without recalculations
+	void setText(std::vector<std::string> text);
+
 	//Returns the text within the text editor
 	std::string getText();
 
@@ -76,7 +79,10 @@ private:
 	void recalculate(const std::string& newStr = "");
 
 private:
-	//TODO: All values in this field are for testing and should be replaced at some point
-
 	GLubyte FONT_COLOR_DIM[3]{ 190, 190, 190 };
+
+	//The first click or keyboard character in the window positions the cursor,
+	//filling in rows/cols needed to put the cursor at that position.
+	//Once this operation is performed, clicking works as normal.
+	bool m_assignedStartPos = false;
 };

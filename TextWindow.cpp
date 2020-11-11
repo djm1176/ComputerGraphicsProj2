@@ -6,7 +6,6 @@
 
 
 TextWindow::TextWindow(int w, int h, int padW, int padH) {
-
 	m_textPadding[0] = padW;
 	m_textPadding[1] = padH;
 	resize(w, h);
@@ -56,6 +55,9 @@ void TextWindow::resize(GLint w, GLint h) {
 
 
 void TextWindow::keyboardCallback(int key) {
+	if (!m_assignedStartPos) {
+		m_assignedStartPos = true;
+	}
 
 	std::string& _targetStr = m_cachedDisplay.at(m_cursorRow);
 	int mod = glutGetModifiers();
@@ -112,7 +114,7 @@ void TextWindow::specialFuncCallback(int key) {
 		if (m_cursorCol < 0) {
 			if (m_cursorRow > 0) {
 				m_cursorRow--;
-				m_cursorCol = m_cachedDisplay.at(m_cursorRow).length() - 1; //Move cursor to far right of row above
+				m_cursorCol = m_cachedDisplay.at(m_cursorRow).length(); //Move cursor to far right of row above
 			} else {
 				m_cursorCol = 0; //At far left; don't do anything.
 			}
@@ -167,14 +169,6 @@ void TextWindow::specialFuncCallback(int key) {
 }
 
 void TextWindow::mouseCallback(int btn, int state, int x, int y) {
-	switch (btn) {
-	case GLUT_KEY_LEFT:
-		m_leftMouseDown = (state == GLUT_KEY_DOWN);
-	case GLUT_KEY_RIGHT:
-		m_rightMouseDown = (state == GLUT_KEY_DOWN);
-		break;
-	}
-
 	if (state == GLUT_KEY_UP) return;
 
 	m_mousePos[0] = x;
@@ -187,6 +181,15 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 	//Change y from 'pixel' coords to 'char' coords
 	y /= glutBitmapHeight(m_font);
 	y++;
+
+	if (!m_assignedStartPos && btn == GLUT_LEFT_BUTTON) {
+		//The user has clicked before doing anything else. Generate a cached display that gets the cursor to the mouse
+		for (int i = 0; i < y - 1; i++) {
+			m_cachedDisplay.push_back("");
+		}
+		m_cachedDisplay.push_back(std::string(x / glutBitmapWidth(m_font, ' ') - 1, ' '));
+		m_assignedStartPos = true;
+	}
 
 	int c{ 0 }, pixels{ 0 };
 	bool done = false;
@@ -239,6 +242,10 @@ void TextWindow::setText(const std::string& text) {
 	recalculate(text);
 }
 
+void TextWindow::setText(std::vector<std::string> text) {
+	m_cachedDisplay = text;
+}
+
 //collapse vector into a string
 std::string TextWindow::getText() {
 
@@ -285,6 +292,11 @@ void TextWindow::recalculate(const std::string& newStr) {
 
 			//Backtrack from max chars in row until a whitespace
 			for (; _split_pos > 0 && !std::isspace(m_cachedDisplay.at(i).at(_split_pos)); _split_pos--);
+			
+			//Is this line of text full of no spaces? i.e. should we wrap at the current char instead of a whitespace?
+			if (_split_pos == 0) {
+				_split_pos = m_cachedDisplay.at(i).length() - 1;
+			}
 
 			//Is the mouse cursor connected to this section that's gonna get word wrapped?
 			if (m_cursorRow == i && m_cursorCol >= _split_pos) {
