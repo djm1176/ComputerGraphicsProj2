@@ -294,7 +294,10 @@ void TextWindow::recalculate(const std::string& newStr) {
 			
 			//Is the discovered whitespace at the end of the row, i.e. can we just delete it?
 			if (_split_pos == _max_row_chars) {
-				m_cachedDisplay.at(i) = m_cachedDisplay.at(i).substr(0, m_cachedDisplay.at(i).length() - 2);
+				m_cachedDisplay.at(i) = m_cachedDisplay.at(i).substr(0, m_cachedDisplay.at(i).length() - 1);
+				if (m_cursorCol - 1 == _split_pos) {
+					m_cursorCol--;
+				}
 				continue;
 			}
 
