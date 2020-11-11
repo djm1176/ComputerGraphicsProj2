@@ -39,15 +39,19 @@
 								* Menu items for fonts
 							* Contribution %
 								* 14.3%
- LAST MODIFIED DATE:	  11/10/2020
+ LAST MODIFIED DATE:	  11/11/2020
  DESCRIPTION:			  Text editor written with GLUT
- NOTE:					  N/A
- FILES:					  Project2.cpp, (labProj.sln, ...)
+ NOTE:					  The program assumes the user has freeglut.dll and freeglut.lib accessible by the OS and Visual Studio, respectively.
+						  Our project implements several modern features in addition to those required in the project syllabus, including:
+						  * Cursor navigation with mouse and keyboard in real-time
+						  * Word wrapping (in addition to character wrapping -- only done when necessary)
+						  * Support for tabs, window resizing, and text modification regardless of cursor location
+ FILES:					  Project2.cpp, (Project2.sln, ...)
  IDE/COMPILER:			  Microsoft Visual Studio 2019
  INSTRUCTION FOR COMPILATION AND EXECUTION:
-		1.		Double click on labProj.sln	to OPEN the project
-		2.		Press Ctrl+F7 to COMPILE
-		3.		Press Ctrl+F5 to EXECUTE
+		1.		Double click on Project2.sln	to OPEN the project
+		2.		Press Ctrl+F7 					to COMPILE
+		3.		Press Ctrl+F5 					to EXECUTE
 ==================================================================================================*/
 #include <GL/freeglut.h> // include GLUT library
 
