@@ -30,6 +30,10 @@
 							* Contribution %
 								* 14.3%
 						  Ben Jinkerson
+							* Contributions
+								* Menu items
+							* Contribution %
+								* 14.3%
 						  Dallas Bramel
 							* Contributions
 								* Menu items for fonts
