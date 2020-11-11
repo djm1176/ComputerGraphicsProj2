@@ -206,7 +206,6 @@ void TextWindow::mouseCallback(int btn, int state, int x, int y) {
 			break; //c now holds x index of cursor
 		}
 	}
-	std::cout << m_cachedDisplay.at(y)[c] << std::endl;
 
 	y--;
 	m_cursorX = pixels;
@@ -293,6 +292,12 @@ void TextWindow::recalculate(const std::string& newStr) {
 			//Backtrack from max chars in row until a whitespace
 			for (; _split_pos > 0 && !std::isspace(m_cachedDisplay.at(i).at(_split_pos)); _split_pos--);
 			
+			//Is the discovered whitespace at the end of the row, i.e. can we just delete it?
+			if (_split_pos == _max_row_chars) {
+				m_cachedDisplay.at(i) = m_cachedDisplay.at(i).substr(0, m_cachedDisplay.at(i).length() - 2);
+				continue;
+			}
+
 			//Is this line of text full of no spaces? i.e. should we wrap at the current char instead of a whitespace?
 			if (_split_pos == 0) {
 				_split_pos = m_cachedDisplay.at(i).length() - 1;
