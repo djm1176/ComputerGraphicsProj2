@@ -300,11 +300,11 @@ void draw() {
 //***********************************************************************************
 void drawHelp() {
 
-	std::string helpItems[12] = { "Welcome to the GLUT Text Editor, Version 1.0, November 2020", " ",
-								 "To change properties about the text, right click the editor to view the menu",
-								 "   Select 'Change theme' to change the editor color theme", "   Select 'Change font' to change the text font",
-								 "   Select 'Change color' to change the font color", "   Select 'Help -> Show or Hide' to show or hide these instructions", "   Select 'Save' to save the text to a file",
-								 "   Select 'Exit' to leave the program", " ", "Keyboard Shortcuts:", "   ALT + S to save the file" };
+	std::string helpItems[] = { "Welcome to the GLUT Text Editor, Version 1.0, November 2020", " ",
+								"To change properties about the text, right click the editor to view the menu",
+								"   Select 'Change theme' to change the editor color theme", "   Select 'Change font' to change the text font",
+								"   Select 'Change color' to change the font color", "   Select 'Help -> Show or Hide' to show or hide these instructions", "   Select 'Save' to save the text to a file",
+								"   Select 'Exit' to leave the program", " ", "Keyboard Shortcuts:", "   ALT + S to save the file", "Note: Word wrapping implies the insertion of a newline." };
 
 	std::string saveLoc = "The saved file is stored at C:\\Temp\\typed.txt";
 	std::string done = "Press Q to terminate the help screen and to return to the editor.";
