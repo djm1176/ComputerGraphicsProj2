@@ -304,7 +304,7 @@ void drawHelp() {
 								 "To change properties about the text, right click the editor to view the menu",
 								 "   Select 'Change theme' to change the editor color theme", "   Select 'Change font' to change the text font",
 								 "   Select 'Change color' to change the font color", "   Select 'Help -> Show or Hide' to show or hide these instructions", "   Select 'Save' to save the text to a file",
-								 "   Select 'Exit' to leave the program", " ", "Keyboard Shortcuts:", "   ALT + S to save the file" };
+								 "   Select 'Exit' to leave the program", " ", "Keyboard Shortcuts:", "   ALT + s to save the file" };
 
 	std::string saveLoc = "The saved file is stored at C:\\Temp\\typed.txt";
 	std::string done = "Press Q to terminate the help screen and to return to the editor.";
